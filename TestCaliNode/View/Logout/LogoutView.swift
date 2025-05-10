@@ -2,12 +2,9 @@ import SwiftUI
 import FirebaseSignInWithApple      // 🧩 Apple
 import FirebaseAuth                 // 🧩 Google
 import GoogleSignIn                 // 🧩 Google
-import FirebaseFirestore            // 🧩 Firestore
 
-struct ContentView: View {
+struct LogoutView: View {
     @State private var err: String = ""
-    @State private var level: Int = 0
-    private let db = Firestore.firestore()
 
     var body: some View {
         VStack(spacing: 20) {
@@ -41,57 +38,8 @@ struct ContentView: View {
                     .foregroundColor(.red)
                     .font(.caption)
             }
-
-            Divider().padding(.vertical)
-
-            // 🧬 Level Display + Button
-            VStack(spacing: 10) {
-                Text("Your Level: \(level)")
-                    .font(.title2)
-
-                Button("Level Up") {
-                    incrementLevel()
-                }
-                .padding()
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(10)
-            }
         }
         .padding()
-        .onAppear {
-            fetchLevel()
-        }
-    }
-
-    // 🔼 Firestore: Fetch user level
-    private func fetchLevel() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        let docRef = db.collection("profiles").document(uid)
-
-        docRef.getDocument { document, error in
-            if let document = document, document.exists {
-                self.level = document.data()?["level"] as? Int ?? 0
-            } else {
-                docRef.setData(["level": 0])
-                self.level = 0
-            }
-        }
-    }
-
-    // 🔼 Firestore: Increment and update level
-    private func incrementLevel() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        let docRef = db.collection("profiles").document(uid)
-
-        level += 1
-        docRef.updateData(["level": level]) { error in
-            if let error = error {
-                print("Error updating level: \(error.localizedDescription)")
-            } else {
-                print("✅ Level updated to \(level)")
-            }
-        }
     }
 
     // 🧩 Google Sign-Out Logic with notification
@@ -114,5 +62,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    LogoutView()
 }

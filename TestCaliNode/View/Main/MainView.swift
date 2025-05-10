@@ -5,6 +5,8 @@
 //  Created by Majd Iskandarani on 5/9/25.
 //
 
+
+
 import SwiftUI
 import FirebaseSignInWithApple   // 🧩 Apple
 import FirebaseAuth              // 🧩 Google
@@ -16,8 +18,8 @@ struct MainView: View {
     var body: some View {
         Group {
             if googleUserLoggedIn {
-                // 🧩 Google user is logged in
-                ContentView()
+                // ✅ Show tabs if Google user is logged in
+                MainTabView()
             } else {
                 switch firebaseSignInWithApple.state {
                 case .loading:
@@ -27,7 +29,8 @@ struct MainView: View {
                 case .notAuthenticated:
                     AuthView()
                 case .authenticated:
-                    ContentView()
+                    // ✅ Show tabs if Apple user is logged in
+                    MainTabView()
                 }
             }
         }
@@ -46,3 +49,4 @@ struct MainView: View {
 #Preview {
     MainView()
 }
+
