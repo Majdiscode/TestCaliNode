@@ -10,6 +10,7 @@
 		7208311C2DCE6FAF0000C71D /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 7208311B2DCE6FAF0000C71D /* FirebaseAuth */; };
 		7208311F2DCE6FCD0000C71D /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 7208311E2DCE6FCD0000C71D /* GoogleSignIn */; };
 		720831212DCE6FCD0000C71D /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 720831202DCE6FCD0000C71D /* GoogleSignInSwift */; };
+		723224AA2DCEF86300016521 /* FirebaseSignInWithApple in Frameworks */ = {isa = PBXBuildFile; productRef = 723224A92DCEF86300016521 /* FirebaseSignInWithApple */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +45,7 @@
 			files = (
 				720831212DCE6FCD0000C71D /* GoogleSignInSwift in Frameworks */,
 				7208311C2DCE6FAF0000C71D /* FirebaseAuth in Frameworks */,
+				723224AA2DCEF86300016521 /* FirebaseSignInWithApple in Frameworks */,
 				7208311F2DCE6FCD0000C71D /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -90,6 +92,7 @@
 				7208311B2DCE6FAF0000C71D /* FirebaseAuth */,
 				7208311E2DCE6FCD0000C71D /* GoogleSignIn */,
 				720831202DCE6FCD0000C71D /* GoogleSignInSwift */,
+				723224A92DCEF86300016521 /* FirebaseSignInWithApple */,
 			);
 			productName = TestCaliNode;
 			productReference = 7208310C2DCE6F430000C71D /* TestCaliNode.app */;
@@ -122,6 +125,7 @@
 			packageReferences = (
 				7208311A2DCE6FAF0000C71D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				7208311D2DCE6FCD0000C71D /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				723224A82DCEF86300016521 /* XCRemoteSwiftPackageReference "FirebaseSignInWithApple" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7208310D2DCE6F430000C71D /* Products */;
@@ -280,6 +284,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = TestCaliNode/TestCaliNode.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5KH847YH76;
@@ -309,6 +314,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = TestCaliNode/TestCaliNode.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5KH847YH76;
@@ -373,6 +379,14 @@
 				minimumVersion = 8.0.0;
 			};
 		};
+		723224A82DCEF86300016521 /* XCRemoteSwiftPackageReference "FirebaseSignInWithApple" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rebeloper/FirebaseSignInWithApple";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.7;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -390,6 +404,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 7208311D2DCE6FCD0000C71D /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		723224A92DCEF86300016521 /* FirebaseSignInWithApple */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 723224A82DCEF86300016521 /* XCRemoteSwiftPackageReference "FirebaseSignInWithApple" */;
+			productName = FirebaseSignInWithApple;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -6,36 +6,21 @@
 //
 
 import SwiftUI
+import FirebaseSignInWithApple
 
 struct ContentView: View {
-    @State private var err : String = ""
-    
-    
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, Majd I")
+            FirebaseSignOutWithAppleButton {
+                FirebaseSignInWithAppleLabel(.signOut)
+            }
             
-            Button{
-                Task{
-                    do{
-                        try await AuthenticationView().logout()
-                    } catch let e {
-                        
-                        err = e.localizedDescription
-                    }
-                }
-                } label: {
-                    Text("Log Out").padding(8)
-                }.buttonStyle(.borderedProminent)
-                
-                Text(err).foregroundColor(.red).font(.caption)
-                
+            FirebaseDeleteAccountWithAppleButton {
+                FirebaseSignInWithAppleLabel(.deleteAccount)
                 
             }
-            .padding()
+        }
+        .padding()
     }
 }
 
