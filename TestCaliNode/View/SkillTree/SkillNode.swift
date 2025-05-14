@@ -6,11 +6,18 @@
 //
 
 
+//
+//  SkillNode.swift
+//  TestCaliNode
+//
+
 import Foundation
 
-struct SkillNode: Identifiable {
+struct SkillNode: Identifiable, Codable {
     let id: String
     let label: String
     let fullLabel: String
+    let requires: [String]
+    let confirmPrompt: String
     var unlocked: Bool
 }

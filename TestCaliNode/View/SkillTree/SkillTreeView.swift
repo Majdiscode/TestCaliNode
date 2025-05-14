@@ -7,10 +7,39 @@
 
 
 
+//
+//  SkillTreeView.swift
+//  TestCaliNode
+//
+//
+//  SkillTreeView.swift
+//  TestCaliNode
+//
+
+
+//
+//  SkillTreeView.swift
+//  TestCaliNode
+//
+
 import SwiftUI
 
 struct SkillTreeView: View {
     var body: some View {
-        PullTreeView()
+        TabView {
+            PullTreeView()
+                .tag(0)
+
+            PushTreeView()
+                .tag(1)
+
+            CoreTreeView()
+                .tag(2)
+
+            LegsTreeView()
+                .tag(3)
+        }
+        .tabViewStyle(.page)
+        .indexViewStyle(.page(backgroundDisplayMode: .always))
     }
 }
