@@ -51,18 +51,22 @@ struct PullTreeView: View {
                         SkillCircle(label: skill.label, unlocked: skill.unlocked)
                             .position(pos)
                             .onTapGesture {
+                                // 🚫 Do nothing if already unlocked
+                                guard !skill.unlocked else { return }
+
                                 if engine.canUnlock(skill) {
                                     pendingSkill = skill
                                     showCard = true
                                 } else {
                                     let unmet = skill.requires.filter { !engine.isSkillUnlocked($0) }
                                     let names: [String] = unmet.compactMap { id in
-                                        guard id != "pullStart" else { return nil }
+                                        guard id != "<treeStart>" else { return nil }  // 🔁 update per tree
                                         return engine.skills.first { $0.id == id }?.fullLabel.components(separatedBy: " (").first
                                     }
                                     prereqMessage = "To unlock \(skill.fullLabel.components(separatedBy: " (").first!), you must first unlock: \(names.joined(separator: " and "))"
                                 }
                             }
+
                     }
 
                     if let message = prereqMessage {
