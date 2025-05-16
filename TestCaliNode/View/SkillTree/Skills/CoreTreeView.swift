@@ -50,6 +50,8 @@ struct CoreTreeView: View {
                         SkillCircle(label: skill.label, unlocked: skill.unlocked)
                             .position(pos)
                             .onTapGesture {
+                                guard !skill.unlocked else { return }
+
                                 if engine.canUnlock(skill) {
                                     pendingSkill = skill
                                     showCard = true
@@ -82,50 +84,24 @@ struct CoreTreeView: View {
                     }
                 }
 
-                VStack {
-                    Spacer()
-                    Button("Reset All Skills") {
-                        resetAll()
-                    }
-                    .padding()
-                    .background(Color.red)
-                    .foregroundColor(.white)
-                    .clipShape(Capsule())
-                    .padding(.bottom, 80)
-                }
+                // ✅ Reusable Reset Button
+                ResetSkillsButton(action: resetAll)
 
+                // ✅ Reusable Confirmation Card
                 if showCard, let skill = pendingSkill {
-                    let backgroundColor = colorScheme == .dark ? Color(white: 0.15) : Color.white
-
                     Color.black.opacity(0.6)
                         .ignoresSafeArea()
 
-                    VStack(spacing: 20) {
-                        Text(skill.confirmPrompt)
-                            .font(.headline)
-                            .multilineTextAlignment(.center)
-
-                        HStack {
-                            Button("Cancel") {
-                                showCard = false
-                            }
-                            .foregroundColor(.red)
-
-                            Spacer()
-
-                            Button("Yes") {
-                                engine.unlock(skill.id)
-                                showCard = false
-                            }
-                            .foregroundColor(.blue)
+                    ConfirmationCardView(
+                        prompt: skill.confirmPrompt,
+                        confirmAction: {
+                            engine.unlock(skill.id)
+                            showCard = false
+                        },
+                        cancelAction: {
+                            showCard = false
                         }
-                    }
-                    .padding()
-                    .frame(maxWidth: 320, minHeight: 180)
-                    .background(backgroundColor)
-                    .cornerRadius(20)
-                    .shadow(radius: 12)
-                    .padding(.horizontal)
+                    )
                 }
             }
         }

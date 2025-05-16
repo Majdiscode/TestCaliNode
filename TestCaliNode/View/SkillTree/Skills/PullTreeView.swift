@@ -5,7 +5,6 @@
 //  Created by Majd Iskandarani on 5/10/25.
 //
 
-
 import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
@@ -51,6 +50,8 @@ struct PullTreeView: View {
                         SkillCircle(label: skill.label, unlocked: skill.unlocked)
                             .position(pos)
                             .onTapGesture {
+                                guard !skill.unlocked else { return }
+
                                 if engine.canUnlock(skill) {
                                     pendingSkill = skill
                                     showCard = true
@@ -83,50 +84,23 @@ struct PullTreeView: View {
                     }
                 }
 
-                VStack {
-                    Spacer()
-                    Button("Reset All Skills") {
-                        resetAll()
-                    }
-                    .padding()
-                    .background(Color.red)
-                    .foregroundColor(.white)
-                    .clipShape(Capsule())
-                    .padding(.bottom, 80)
-                }
+                ResetSkillsButton(action: resetAll)
 
+                // 🔁 REUSABLE UNLOCK CARD
                 if showCard, let skill = pendingSkill {
-                    let backgroundColor = colorScheme == .dark ? Color(white: 0.15) : Color.white
-
                     Color.black.opacity(0.6)
                         .ignoresSafeArea()
 
-                    VStack(spacing: 20) {
-                        Text(skill.confirmPrompt)
-                            .font(.headline)
-                            .multilineTextAlignment(.center)
-
-                        HStack {
-                            Button("Cancel") {
-                                showCard = false
-                            }
-                            .foregroundColor(.red)
-
-                            Spacer()
-
-                            Button("Yes") {
-                                engine.unlock(skill.id)
-                                showCard = false
-                            }
-                            .foregroundColor(.blue)
+                    ConfirmationCardView(
+                        prompt: skill.confirmPrompt,
+                        confirmAction: {
+                            engine.unlock(skill.id)
+                            showCard = false
+                        },
+                        cancelAction: {
+                            showCard = false
                         }
-                    }
-                    .padding()
-                    .frame(maxWidth: 320, minHeight: 180)
-                    .background(backgroundColor)
-                    .cornerRadius(20)
-                    .shadow(radius: 12)
-                    .padding(.horizontal)
+                    )
                 }
             }
         }
@@ -139,7 +113,6 @@ struct PullTreeView: View {
             userRef.getDocument { snapshot, error in
                 var skillsToSet = [String: Any]()
 
-                // Ensure skill 0 is present in Firestore
                 if let data = snapshot?.data(),
                    let skills = data["skills"] as? [String: Any],
                    skills[skill0] as? Bool != true {
@@ -150,15 +123,13 @@ struct PullTreeView: View {
                     userRef.updateData(skillsToSet)
                 }
 
-                // Always mark pullStart as unlocked locally
                 if let index = engine.skills.firstIndex(where: { $0.id == skill0 }) {
                     engine.skills[index].unlocked = true
                 }
 
-                // Load all unlocked skills
                 if let unlockedMap = snapshot?.data()?["skills"] as? [String: Bool] {
                     for (id, isUnlocked) in unlockedMap {
-                        if id == skill0 { continue } // skip pullStart
+                        if id == skill0 { continue }
                         if let index = engine.skills.firstIndex(where: { $0.id == id }) {
                             engine.skills[index].unlocked = isUnlocked
                         }
@@ -171,7 +142,7 @@ struct PullTreeView: View {
     private func resetAll() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
 
-        let ids = engine.skills.map { $0.id }.filter { $0 != "pullStart" } // ⛔ exclude pullStart
+        let ids = engine.skills.map { $0.id }.filter { $0 != "pullStart" }
         var updates: [String: Any] = [:]
         for id in ids {
             updates["skills.\(id)"] = FieldValue.delete()
