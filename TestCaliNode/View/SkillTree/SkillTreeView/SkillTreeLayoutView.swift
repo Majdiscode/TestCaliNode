@@ -10,7 +10,7 @@ struct SkillTreeLayoutView: View {
     let baseSkillID: String
     let treeName: String
 
-    @StateObject private var engine: SkillTreeEngine
+    @State private var engine: SkillTreeEngine
     @State private var prereqMessage: String? = nil
     @State private var showCard = false
     @State private var pendingSkill: SkillNode? = nil
@@ -25,23 +25,16 @@ struct SkillTreeLayoutView: View {
         self.positions = positions
         self.baseSkillID = baseSkillID
         self.treeName = treeName
-        _engine = StateObject(wrappedValue: SkillTreeEngine(skills: skills, treeName: treeName))
+        _engine = State(initialValue: SkillTreeEngine(skills: skills, treeName: treeName))
     }
 
     var body: some View {
         GeometryReader { geo in
             ZStack {
                 ZStack {
-                    // Lines
-                    ForEach(engine.skills, id: \.id) { skill in
-                        ForEach(skill.requires, id: \.self) { reqID in
-                            if let from = positions[reqID], let to = positions[skill.id] {
-                                LineConnector(from: from, to: to)
-                            }
-                        }
-                    }
+                    connectorLines
 
-                    // Circles
+                    // Skill Circles
                     ForEach(engine.skills.filter { $0.id != baseSkillID }) { skill in
                         if let pos = positions[skill.id] {
                             SkillCircle(label: skill.label, unlocked: skill.unlocked)
@@ -64,7 +57,6 @@ struct SkillTreeLayoutView: View {
                         }
                     }
 
-                    // Warning message
                     if let message = prereqMessage {
                         VStack {
                             Spacer()
@@ -83,6 +75,7 @@ struct SkillTreeLayoutView: View {
                     }
                 }
 
+                // Confirmation card
                 if showCard, let skill = pendingSkill {
                     Color.black.opacity(0.6)
                         .ignoresSafeArea()
@@ -102,49 +95,66 @@ struct SkillTreeLayoutView: View {
                 }
             }
         }
-        .onAppear { reloadSkillState() }
+        .onAppear {
+            print("📲 onAppear triggered for \(treeName)")
+            reloadSkillState()
+        }
         .onReceive(NotificationCenter.default.publisher(for: Notification.Name("SkillsReset"))) { _ in
+            print("🔁 SkillsReset notification received in \(treeName)")
             reloadSkillState()
         }
     }
 
+    @ViewBuilder
+    private var connectorLines: some View {
+        ForEach(engine.skills, id: \.id) { skill in
+            ForEach(skill.requires, id: \.self) { reqID in
+                if let from = positions[reqID], let to = positions[skill.id] {
+                    LineConnector(from: from, to: to)
+                }
+            }
+        }
+    }
+
     private func reloadSkillState() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
+        print("⏳ Reloading skill state for \(treeName)")
+        guard let uid = Auth.auth().currentUser?.uid else {
+            print("❌ No UID found")
+            return
+        }
 
         let userRef = Firestore.firestore().collection("profiles").document(uid)
 
         userRef.getDocument { snapshot, error in
-            var skillsToSet: [String: Any] = [:]
-
-            if let data = snapshot?.data(),
-               let skillMap = data["skills"] as? [String: Any],
-               skillMap[baseSkillID] as? Bool != true {
-                skillsToSet["skills.\(baseSkillID)"] = true
+            if let error = error {
+                print("❌ Firestore fetch error: \(error.localizedDescription)")
+                return
             }
 
-            if !skillsToSet.isEmpty {
-                userRef.updateData(skillsToSet)
+            var updatedSkills = skills
+
+            if let index = updatedSkills.firstIndex(where: { $0.id == baseSkillID }) {
+                updatedSkills[index].unlocked = true
             }
 
-            if let index = engine.skills.firstIndex(where: { $0.id == baseSkillID }) {
-                engine.skills[index].unlocked = true
-            }
-
-            if let unlocked = snapshot?.data()?["skills"] as? [String: Bool] {
-                for (id, isUnlocked) in unlocked {
-                    if let i = engine.skills.firstIndex(where: { $0.id == id }) {
-                        engine.skills[i].unlocked = isUnlocked
+            if let unlockedMap = snapshot?.data()?["skills"] as? [String: Bool] {
+                for (id, isUnlocked) in unlockedMap {
+                    if let index = updatedSkills.firstIndex(where: { $0.id == id }) {
+                        updatedSkills[index].unlocked = isUnlocked
                     }
                 }
+                print("✅ Loaded \(unlockedMap.count) skills from Firestore for \(treeName)")
             } else {
-                for i in engine.skills.indices {
-                    if engine.skills[i].id != baseSkillID {
-                        engine.skills[i].unlocked = false
+                print("ℹ️ No unlocked skill data found, resetting all except base.")
+                for i in updatedSkills.indices {
+                    if updatedSkills[i].id != baseSkillID {
+                        updatedSkills[i].unlocked = false
                     }
                 }
             }
 
-            engine.objectWillChange.send()
+            engine = SkillTreeEngine(skills: updatedSkills, treeName: treeName)
+            print("✅ Engine replaced and UI updated for \(treeName)")
         }
     }
 }

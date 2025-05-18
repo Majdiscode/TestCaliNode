@@ -1,12 +1,10 @@
-//
-//  ProgressTab.swift
-//  TestCaliNode
-//
-
 import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
 import Charts
+
+// ✅ Import shared modular skill list
+import Foundation
 
 struct ProgressData: Identifiable {
     let id = UUID()
@@ -63,6 +61,15 @@ struct ProgressTab: View {
                     .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 2)
                     .padding(.horizontal)
 
+                    // 🔁 Reset All Skills Button
+                    Button("Reset All Skills") {
+                        resetAllSkills()
+                    }
+                    .padding()
+                    .background(Color.red)
+                    .foregroundColor(.white)
+                    .clipShape(Capsule())
+
                     Spacer(minLength: 40)
                 }
             }
@@ -92,7 +99,6 @@ struct ProgressTab: View {
                         .frame(height: 260)
                         .padding(.horizontal)
                         .animation(.easeInOut, value: globalLevel)
-
                     }
 
                     Spacer(minLength: 60)
@@ -126,15 +132,16 @@ struct ProgressTab: View {
                 return
             }
 
-            let pushSkills = ["kneePushup", "inclinePushup", "pushup"]
-            let pullSkills = ["deadHang", "scapularPulls", "pullUp"]
-            let coreSkills = ["hollowHold", "plank", "legRaises"]
-            let legsSkills = ["wallSit", "stepUp", "pistolSquat"]
+            // Pull in modular skill lists
+            let pushIDs = pushSkills.map(\.id).filter { !$0.hasSuffix("Start") }
+            let pullIDs = pullSkills.map(\.id).filter { !$0.hasSuffix("Start") }
+            let coreIDs = coreSkills.map(\.id).filter { !$0.hasSuffix("Start") }
+            let legsIDs = legsSkills.map(\.id).filter { !$0.hasSuffix("Start") }
 
-            let push = savedSkills.filter { pushSkills.contains($0.key) && $0.value }.count
-            let pull = savedSkills.filter { pullSkills.contains($0.key) && $0.value }.count
-            let core = savedSkills.filter { coreSkills.contains($0.key) && $0.value }.count
-            let legs = savedSkills.filter { legsSkills.contains($0.key) && $0.value }.count
+            let push = savedSkills.filter { pushIDs.contains($0.key) && $0.value }.count
+            let pull = savedSkills.filter { pullIDs.contains($0.key) && $0.value }.count
+            let core = savedSkills.filter { coreIDs.contains($0.key) && $0.value }.count
+            let legs = savedSkills.filter { legsIDs.contains($0.key) && $0.value }.count
 
             DispatchQueue.main.async {
                 pushLevel = push
@@ -145,13 +152,36 @@ struct ProgressTab: View {
             }
         }
     }
+
+    private func resetAllSkills() {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+
+        let idsToReset = allSkills
+            .map(\.id)
+            .filter { !$0.hasSuffix("Start") }
+
+        var updates: [String: Any] = [:]
+        for id in idsToReset {
+            updates["skills.\(id)"] = FieldValue.delete()
+        }
+
+        Firestore.firestore().collection("profiles").document(uid).updateData(updates) { error in
+            if let error = error {
+                print("❌ Failed to reset skills: \(error.localizedDescription)")
+            } else {
+                print("✅ Skills reset successfully")
+                NotificationCenter.default.post(name: Notification.Name("SkillsReset"), object: nil)
+                fetchSkillLevels()
+            }
+        }
+    }
 }
 
 struct ProgressItem: View {
     let label: String
     let value: Int
     let color: Color
-    let maxXP: Int = 3
+    let maxXP: Int = 6
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
