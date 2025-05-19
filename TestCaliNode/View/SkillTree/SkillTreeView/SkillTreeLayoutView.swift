@@ -34,7 +34,6 @@ struct SkillTreeLayoutView: View {
                 ZStack {
                     connectorLines
 
-                    // Skill Circles
                     ForEach(engine.skills.filter { $0.id != baseSkillID }) { skill in
                         if let pos = positions[skill.id] {
                             SkillCircle(label: skill.label, unlocked: skill.unlocked)
@@ -43,6 +42,7 @@ struct SkillTreeLayoutView: View {
                                     guard !skill.unlocked else { return }
 
                                     if engine.canUnlock(skill) {
+                                        print("✅ \(skill.id) is ready to unlock. Showing card.")
                                         pendingSkill = skill
                                         showCard = true
                                     } else {
@@ -51,6 +51,7 @@ struct SkillTreeLayoutView: View {
                                             if id == baseSkillID { return nil }
                                             return engine.skills.first { $0.id == id }?.fullLabel.components(separatedBy: " (").first
                                         }
+                                        print("❌ \(skill.id) prerequisites not met: \(unmet)")
                                         prereqMessage = "To unlock \(skill.fullLabel.components(separatedBy: " (").first!), you must first unlock: \(names.joined(separator: " and "))"
                                     }
                                 }
@@ -75,7 +76,6 @@ struct SkillTreeLayoutView: View {
                     }
                 }
 
-                // Confirmation card
                 if showCard, let skill = pendingSkill {
                     Color.black.opacity(0.6)
                         .ignoresSafeArea()
@@ -83,10 +83,12 @@ struct SkillTreeLayoutView: View {
                     ConfirmationCardView(
                         prompt: skill.confirmPrompt,
                         confirmAction: {
+                            print("🟢 Unlocking \(skill.id)")
                             engine.unlock(skill.id)
                             showCard = false
                         },
                         cancelAction: {
+                            print("🔴 Cancel unlock of \(skill.id)")
                             showCard = false
                         }
                     )
@@ -96,7 +98,7 @@ struct SkillTreeLayoutView: View {
             }
         }
         .onAppear {
-            print("📲 onAppear triggered for \(treeName)")
+            print("📲 onAppear triggered for tree: \(treeName)")
             reloadSkillState()
         }
         .onReceive(NotificationCenter.default.publisher(for: Notification.Name("SkillsReset"))) { _ in
@@ -117,7 +119,7 @@ struct SkillTreeLayoutView: View {
     }
 
     private func reloadSkillState() {
-        print("⏳ Reloading skill state for \(treeName)")
+        print("⏳ Reloading skill state for tree: \(treeName)")
         guard let uid = Auth.auth().currentUser?.uid else {
             print("❌ No UID found")
             return
@@ -132,29 +134,42 @@ struct SkillTreeLayoutView: View {
             }
 
             var updatedSkills = skills
+            var skillsToSet: [String: Any] = [:]
 
+            // Always unlock base skill locally
             if let index = updatedSkills.firstIndex(where: { $0.id == baseSkillID }) {
                 updatedSkills[index].unlocked = true
+                print("✅ Locally unlocked base skill: \(baseSkillID)")
             }
 
-            if let unlockedMap = snapshot?.data()?["skills"] as? [String: Bool] {
-                for (id, isUnlocked) in unlockedMap {
-                    if let index = updatedSkills.firstIndex(where: { $0.id == id }) {
-                        updatedSkills[index].unlocked = isUnlocked
-                    }
+            let skillsMap = snapshot?.data()?["skills"] as? [String: Bool] ?? [:]
+            print("📥 Firestore skill data: \(skillsMap)")
+
+            if skillsMap[baseSkillID] != true {
+                print("⚠️ Base skill \(baseSkillID) missing in Firestore. Will add.")
+                skillsToSet["skills.\(baseSkillID)"] = true
+            }
+
+            for (id, isUnlocked) in skillsMap {
+                if let index = updatedSkills.firstIndex(where: { $0.id == id }) {
+                    updatedSkills[index].unlocked = isUnlocked
+                    print("↪️ Setting \(id) = \(isUnlocked)")
                 }
-                print("✅ Loaded \(unlockedMap.count) skills from Firestore for \(treeName)")
-            } else {
-                print("ℹ️ No unlocked skill data found, resetting all except base.")
-                for i in updatedSkills.indices {
-                    if updatedSkills[i].id != baseSkillID {
-                        updatedSkills[i].unlocked = false
+            }
+
+            if !skillsToSet.isEmpty {
+                print("⬆️ Writing base skill to Firestore: \(skillsToSet)")
+                userRef.setData(skillsToSet, merge: true) { err in
+                    if let err = err {
+                        print("❌ Failed to write base skill: \(err.localizedDescription)")
+                    } else {
+                        print("✅ Successfully restored base skill \(baseSkillID) to Firestore")
                     }
                 }
             }
 
             engine = SkillTreeEngine(skills: updatedSkills, treeName: treeName)
-            print("✅ Engine replaced and UI updated for \(treeName)")
+            print("✅ Engine reloaded and assigned for tree: \(treeName)")
         }
     }
 }
