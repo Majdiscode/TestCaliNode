@@ -11,7 +11,6 @@ struct PullTreeView: View {
             SkillTreeLayoutView(
                 skills: pullSkills,
                 positions: pullPositions,
-                baseSkillID: "pullStart",
                 treeName: "pull"
             )
             .frame(minHeight: 1000)

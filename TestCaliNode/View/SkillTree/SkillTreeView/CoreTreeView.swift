@@ -11,7 +11,7 @@ struct CoreTreeView: View {
             SkillTreeLayoutView(
                 skills: coreSkills,
                 positions: corePositions,
-                baseSkillID: "coreStart",
+                
                 treeName: "core"
             )
             .frame(minHeight: 1000)

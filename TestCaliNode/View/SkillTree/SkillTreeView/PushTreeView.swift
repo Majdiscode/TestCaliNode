@@ -11,7 +11,7 @@ struct PushTreeView: View {
             SkillTreeLayoutView(
                 skills: pushSkills,
                 positions: pushPositions,
-                baseSkillID: "pushStart",
+                
                 treeName: "push"
             )
             .frame(minHeight: 1000)

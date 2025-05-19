@@ -11,7 +11,7 @@ struct LegsTreeView: View {
             SkillTreeLayoutView(
                 skills: legsSkills,
                 positions: legsPositions,
-                baseSkillID: "legsStart",
+                
                 treeName: "legs"
             )
             .frame(minHeight: 1000)
