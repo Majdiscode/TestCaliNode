@@ -129,15 +129,15 @@ struct ProgressTab: View {
                 return
             }
 
-            let pushIDs = pushSkills.map(\.id)
-            let pullIDs = pullSkills.map(\.id)
-            let coreIDs = coreSkills.map(\.id)
-            let legsIDs = legsSkills.map(\.id)
+            func countUnlocked(treeName: String) -> Int {
+                guard let tree = allSkillTrees.first(where: { $0.name == treeName }) else { return 0 }
+                return tree.skills.filter { savedSkills[$0.id] == true }.count
+            }
 
-            let push = savedSkills.filter { pushIDs.contains($0.key) && $0.value }.count
-            let pull = savedSkills.filter { pullIDs.contains($0.key) && $0.value }.count
-            let core = savedSkills.filter { coreIDs.contains($0.key) && $0.value }.count
-            let legs = savedSkills.filter { legsIDs.contains($0.key) && $0.value }.count
+            let push = countUnlocked(treeName: "push")
+            let pull = countUnlocked(treeName: "pull")
+            let core = countUnlocked(treeName: "core")
+            let legs = countUnlocked(treeName: "legs")
 
             DispatchQueue.main.async {
                 pushLevel = push
