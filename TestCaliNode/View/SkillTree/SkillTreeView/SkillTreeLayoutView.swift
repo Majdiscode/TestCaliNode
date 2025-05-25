@@ -13,11 +13,15 @@ struct SkillTreeLayoutView: View {
     @State private var prereqMessage: String? = nil
     @State private var showCard = false
     @State private var pendingSkill: SkillNode? = nil
+    @State private var globallyUnlockedIDs: Set<String> = []
 
     var body: some View {
-        GeometryReader { geo in
+        ZStack {
             if let engine = engine {
-                ZStack {
+                ScrollView {
+                    let maxY = positions.values.map(\.y).max() ?? 1000
+                    let scrollHeight = maxY + 400
+
                     ZStack {
                         connectorLines(engine: engine)
 
@@ -25,22 +29,18 @@ struct SkillTreeLayoutView: View {
                             if let pos = positions[skill.id] {
                                 SkillCircle(label: skill.label, unlocked: skill.unlocked)
                                     .position(pos)
+                                    .id(skill.id)
                                     .onTapGesture {
                                         guard !skill.unlocked else { return }
 
-                                        let engineUnlocked = engine.skills.filter { $0.unlocked }.map(\.id)
-                                        print("🧠 Checking unlock for \(skill.id), requires: \(skill.requires), unlocked: \(engineUnlocked)")
-
-                                        if engine.canUnlock(skill) {
-                                            print("✅ \(skill.id) can unlock. Showing card.")
+                                        if skill.requires.allSatisfy({ globallyUnlockedIDs.contains($0) }) {
                                             pendingSkill = skill
                                             showCard = true
                                         } else {
-                                            let unmet = skill.requires.filter { !engine.isSkillUnlocked($0) }
-                                            let names = unmet.compactMap { (id: String) -> String? in
-                                                return engine.skills.first { $0.id == id }?.fullLabel.components(separatedBy: " (").first
+                                            let unmet = skill.requires.filter { !globallyUnlockedIDs.contains($0) }
+                                            let names = unmet.compactMap { id in
+                                                allSkills.first(where: { $0.id == id })?.fullLabel.components(separatedBy: " (").first
                                             }
-                                            print("❌ \(skill.id) prerequisites not met: \(unmet)")
                                             prereqMessage = "To unlock \(skill.fullLabel.components(separatedBy: " (").first!), you must first unlock: \(names.joined(separator: " and "))"
                                         }
                                     }
@@ -64,38 +64,40 @@ struct SkillTreeLayoutView: View {
                             }
                         }
                     }
-
-                    if showCard, let skill = pendingSkill {
-                        Color.black.opacity(0.6)
-                            .ignoresSafeArea()
-
-                        ConfirmationCardView(
-                            prompt: skill.confirmPrompt,
-                            confirmAction: {
-                                print("🟢 Unlocking \(skill.id)")
-                                engine.unlock(skill.id)
-                                showCard = false
-                            },
-                            cancelAction: {
-                                print("🔴 Cancel unlock of \(skill.id)")
-                                showCard = false
-                            }
-                        )
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .zIndex(1)
-                    }
+                    .frame(minHeight: scrollHeight)
+                    .padding(.top, 200)
                 }
             } else {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+
+            if showCard, let skill = pendingSkill {
+                Color.black.opacity(0.6).ignoresSafeArea()
+
+                ConfirmationCardView(
+                    prompt: skill.confirmPrompt,
+                    confirmAction: {
+                        engine?.unlock(skill.id)
+                        showCard = false
+                        globallyUnlockedIDs.insert(skill.id)
+                    },
+                    cancelAction: {
+                        showCard = false
+                    }
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .zIndex(10)
+            }
         }
         .onAppear {
-            print("📲 onAppear triggered for tree: \(treeName)")
             reloadSkillState()
         }
         .onReceive(NotificationCenter.default.publisher(for: Notification.Name("SkillsReset"))) { _ in
-            reloadSkillState()
+            engine = nil
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                reloadSkillState()
+            }
         }
     }
 
@@ -110,36 +112,22 @@ struct SkillTreeLayoutView: View {
     }
 
     private func reloadSkillState() {
-        print("⏳ Reloading skill state for tree: \(treeName)")
-        guard let uid = Auth.auth().currentUser?.uid else {
-            print("❌ No UID found")
-            return
-        }
+        guard let uid = Auth.auth().currentUser?.uid else { return }
 
         let userRef = Firestore.firestore().collection("profiles").document(uid)
-
         userRef.getDocument { snapshot, error in
-            if let error = error {
-                print("❌ Firestore fetch error: \(error.localizedDescription)")
-                return
-            }
-
             var updatedSkills = skills
             let skillsMap = snapshot?.data()?["skills"] as? [String: Bool] ?? [:]
-            print("📥 Firestore skills map: \(skillsMap)")
 
             for (id, isUnlocked) in skillsMap {
                 if let index = updatedSkills.firstIndex(where: { $0.id == id }) {
                     updatedSkills[index].unlocked = isUnlocked
-                    print("↪️ \(id) = \(isUnlocked)")
                 }
             }
 
             DispatchQueue.main.async {
-                let currentEngine = SkillTreeEngine(skills: updatedSkills, treeName: treeName)
-                engine = currentEngine
-                print("✅ Engine fully loaded for tree: \(treeName)")
-                currentEngine.skills.forEach { print("🔹 \($0.id): \($0.unlocked)") }
+                engine = SkillTreeEngine(skills: updatedSkills, treeName: treeName)
+                globallyUnlockedIDs = Set(skillsMap.filter { $0.value }.map { $0.key })
             }
         }
     }

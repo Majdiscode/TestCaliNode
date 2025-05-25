@@ -21,9 +21,14 @@ struct PositionedSkill {
             id: id,
             label: label,
             fullLabel: fullLabel,
+            tree: "unknown",                 // 🔁 temporary fallback
             requires: requires,
+            variationLevel: 0,               // 🔁 default if unknown
+            version: 1,                      // 🔁 default version
             confirmPrompt: confirmPrompt,
-            unlocked: unlocked
+            unlocked: unlocked,
+            masteryLevel: nil,               // 🔁 not used by PositionedSkill
+            logHistory: []                   // 🔁 initialized empty
         )
     }
 }

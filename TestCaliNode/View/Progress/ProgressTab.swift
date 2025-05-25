@@ -31,7 +31,7 @@ struct ProgressTab: View {
 
     var body: some View {
         TabView {
-            // Page 1: Level Bars
+            // Page 1: XP Bars
             ScrollView {
                 VStack(spacing: 28) {
                     Text("Progress")
@@ -58,7 +58,6 @@ struct ProgressTab: View {
                     .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 2)
                     .padding(.horizontal)
 
-                    // 🔴 Reset Button
                     Button("Reset All Skills") {
                         resetAllSkills()
                     }
@@ -110,41 +109,26 @@ struct ProgressTab: View {
     }
 
     private func fetchSkillLevels() {
-        guard let uid = Auth.auth().currentUser?.uid else {
-            print("❌ No user UID found")
-            return
-        }
+        guard let uid = Auth.auth().currentUser?.uid else { return }
 
         let docRef = db.collection("profiles").document(uid)
-
         docRef.getDocument { document, error in
-            if let error = error {
-                print("❌ Firestore fetch error: \(error.localizedDescription)")
-                return
-            }
-
             guard let data = document?.data(),
                   let savedSkills = data["skills"] as? [String: Bool] else {
-                print("❌ No skills data found in Firestore document")
                 return
             }
 
-            func countUnlocked(treeName: String) -> Int {
-                guard let tree = allSkillTrees.first(where: { $0.name == treeName }) else { return 0 }
-                return tree.skills.filter { savedSkills[$0.id] == true }.count
+            func countUnlocked(treeID: String) -> Int {
+                let ids = allSkillTrees.first { $0.id == treeID }?.skills.map(\.id) ?? []
+                return savedSkills.filter { ids.contains($0.key) && $0.value }.count
             }
 
-            let push = countUnlocked(treeName: "push")
-            let pull = countUnlocked(treeName: "pull")
-            let core = countUnlocked(treeName: "core")
-            let legs = countUnlocked(treeName: "legs")
-
             DispatchQueue.main.async {
-                pushLevel = push
-                pullLevel = pull
-                coreLevel = core
-                legsLevel = legs
-                globalLevel = push + pull + core + legs
+                pushLevel = countUnlocked(treeID: "push")
+                pullLevel = countUnlocked(treeID: "pull")
+                coreLevel = countUnlocked(treeID: "core")
+                legsLevel = countUnlocked(treeID: "legs")
+                globalLevel = pushLevel + pullLevel + coreLevel + legsLevel
             }
         }
     }
@@ -152,18 +136,11 @@ struct ProgressTab: View {
     private func resetAllSkills() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
 
-        let idsToReset = allSkills.map(\.id)
-        var updates: [String: Any] = [:]
+        let idsToReset = allSkillTrees.flatMap { $0.skills.map(\.id) }
+        let updates = Dictionary(uniqueKeysWithValues: idsToReset.map { ("skills.\($0)", FieldValue.delete()) })
 
-        for id in idsToReset {
-            updates["skills.\(id)"] = FieldValue.delete()
-        }
-
-        Firestore.firestore().collection("profiles").document(uid).updateData(updates) { error in
-            if let error = error {
-                print("❌ Failed to reset skills: \(error.localizedDescription)")
-            } else {
-                print("✅ All skills reset in Firestore")
+        db.collection("profiles").document(uid).updateData(updates) { error in
+            if error == nil {
                 NotificationCenter.default.post(name: Notification.Name("SkillsReset"), object: nil)
                 fetchSkillLevels()
             }
