@@ -8,11 +8,19 @@
 import SwiftUI
 
 struct MainTabView: View {
+    @StateObject private var skillManager = GlobalSkillManager()
+    
     var body: some View {
         TabView {
-            SkillTreeView()
+            // Pass the same skillManager to both views so they stay in sync
+            SkillTreeViewWithManager(skillManager: skillManager)
                 .tabItem {
                     Label("Skill Tree", systemImage: "tree")
+                }
+            
+            ProgressDashboard(skillManager: skillManager)
+                .tabItem {
+                    Label("Progress", systemImage: "chart.pie")
                 }
 
             LogoutView()
@@ -20,5 +28,14 @@ struct MainTabView: View {
                     Label("Logout", systemImage: "rectangle.portrait.and.arrow.right")
                 }
         }
+    }
+}
+
+// Wrapper to pass skillManager to SkillTreeView
+struct SkillTreeViewWithManager: View {
+    @ObservedObject var skillManager: GlobalSkillManager
+    
+    var body: some View {
+        SkillTreeView(skillManager: skillManager)
     }
 }
