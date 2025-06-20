@@ -2,7 +2,7 @@
 //  ProgressDashboard.swift
 //  TestCaliNode
 //
-//  Updated by Majd Iskandarani on 6/14/25.
+//  Enhanced with Quest System Integration - Updated by Majd Iskandarani on 6/14/25.
 //
 
 import SwiftUI
@@ -10,6 +10,7 @@ import Charts
 
 struct ProgressDashboard: View {
     @ObservedObject var skillManager: GlobalSkillManager
+    @ObservedObject var questManager: QuestManager
     @State private var showResetConfirmation = false
     
     // Updated for enhanced trees
@@ -39,6 +40,9 @@ struct ProgressDashboard: View {
                 headerSection
                 
                 overallProgressSection
+                
+                // NEW: Quest progress section
+                questProgressSection
                 
                 enhancedTreeProgressSection
                 
@@ -116,6 +120,59 @@ struct ProgressDashboard: View {
         .padding(24)
         .background(Color(uiColor: .secondarySystemBackground))
         .cornerRadius(20)
+    }
+    
+    // MARK: - NEW: Quest Progress Section
+    private var questProgressSection: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            Text("Quest Progress")
+                .font(.title2)
+                .fontWeight(.semibold)
+            
+            LazyVGrid(columns: [
+                GridItem(.flexible(), spacing: 16),
+                GridItem(.flexible(), spacing: 16)
+            ], spacing: 16) {
+                QuestProgressStatCard(
+                    title: "Active Quests",
+                    value: "\(questManager.activeQuests.count)",
+                    color: .blue,
+                    icon: "flag.fill"
+                )
+                
+                QuestProgressStatCard(
+                    title: "Completed Today",
+                    value: "\(todayCompletedQuests)",
+                    color: .green,
+                    icon: "checkmark.circle.fill"
+                )
+                
+                QuestProgressStatCard(
+                    title: "Total XP",
+                    value: "\(questManager.playerExperience)",
+                    color: .purple,
+                    icon: "star.fill"
+                )
+                
+                QuestProgressStatCard(
+                    title: "Coins Earned",
+                    value: "\(questManager.playerCoins)",
+                    color: .yellow,
+                    icon: "dollarsign.circle.fill"
+                )
+            }
+            
+            // Mini quest widget for quick access
+            MiniQuestWidget(questManager: questManager)
+        }
+    }
+    
+    private var todayCompletedQuests: Int {
+        let today = Calendar.current.startOfDay(for: Date())
+        return questManager.completedQuests.filter { quest in
+            guard let completedAt = quest.completedAt else { return false }
+            return Calendar.current.isDate(completedAt, inSameDayAs: today)
+        }.count
     }
     
     // MARK: - Enhanced Tree Progress with Branch Breakdown
@@ -205,7 +262,8 @@ struct ProgressDashboard: View {
                 .foregroundColor(.red)
             
             VStack(alignment: .leading, spacing: 12) {
-                Text("Reset All Progress")
+                // Skills Reset
+                Text("Reset All Skills")
                     .font(.headline)
                     .fontWeight(.medium)
                 
@@ -221,6 +279,38 @@ struct ProgressDashboard: View {
                 .background(Color.red)
                 .foregroundColor(.white)
                 .clipShape(Capsule())
+                
+                Divider()
+                    .padding(.vertical, 8)
+                
+                // Quest Reset
+                Text("Reset Quest Data")
+                    .font(.headline)
+                    .fontWeight(.medium)
+                
+                Text("Reset all quest progress, XP, and coins for testing purposes.")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                
+                HStack(spacing: 12) {
+                    Button("Reset Quests") {
+                        questManager.resetAllQuests()
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(Color.orange)
+                    .foregroundColor(.white)
+                    .clipShape(Capsule())
+                    
+                    Button("Reset Progress Only") {
+                        questManager.resetQuestProgress()
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(Color.yellow)
+                    .foregroundColor(.black)
+                    .clipShape(Capsule())
+                }
             }
         }
         .padding(24)
@@ -485,6 +575,36 @@ struct StatCard: View {
         VStack(spacing: 12) {
             Text(value)
                 .font(.system(size: 28, weight: .bold, design: .rounded))
+                .foregroundColor(color)
+            
+            Text(title)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(20)
+        .background(Color(uiColor: .secondarySystemBackground))
+        .cornerRadius(16)
+    }
+}
+
+// MARK: - Quest Progress Stat Card Component (renamed to avoid conflicts)
+
+struct QuestProgressStatCard: View {
+    let title: String
+    let value: String
+    let color: Color
+    let icon: String
+    
+    var body: some View {
+        VStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.title2)
+                .foregroundColor(color)
+            
+            Text(value)
+                .font(.system(size: 24, weight: .bold, design: .rounded))
                 .foregroundColor(color)
             
             Text(title)
