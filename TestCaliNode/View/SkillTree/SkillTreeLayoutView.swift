@@ -37,21 +37,17 @@ struct EnhancedSkillTreeLayoutView: View {
                     
                     // Skills with better spacing
                     skillNodesView()
-                    
-                    // Clean error message if needed
-                    if let message = prereqMessage {
-                        minimalistErrorMessage(message)
-                    }
                 }
                 .frame(width: UIScreen.main.bounds.width, height: contentHeight)
                 .clipped()
             }
         }
         .overlay(
-            // Clean confirmation overlay
+            // FIXED: Centered overlays for both confirmation and error messages
             Group {
                 if showCard, let skill = pendingSkill {
-                    Color.black.opacity(0.4) // Less intense overlay
+                    // Confirmation card overlay
+                    Color.black.opacity(0.4)
                         .ignoresSafeArea()
                         .overlay(
                             ConfirmationCardView(
@@ -66,6 +62,21 @@ struct EnhancedSkillTreeLayoutView: View {
                             )
                         )
                         .zIndex(10)
+                } else if let message = prereqMessage {
+                    // FIXED: Centered error message overlay
+                    Color.black.opacity(0.3)
+                        .ignoresSafeArea()
+                        .overlay(
+                            CenteredErrorMessage(
+                                message: message,
+                                onDismiss: {
+                                    withAnimation(.easeOut(duration: 0.3)) {
+                                        prereqMessage = nil
+                                    }
+                                }
+                            )
+                        )
+                        .zIndex(9)
                 }
             }
         )
@@ -192,31 +203,6 @@ struct EnhancedSkillTreeLayoutView: View {
         }
     }
     
-    // MARK: - Clean Error Message
-    private func minimalistErrorMessage(_ message: String) -> some View {
-        VStack {
-            Spacer()
-            Text(message)
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(.white)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 20)
-                .padding(.vertical, 16)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.red.opacity(0.9))
-                        .shadow(color: .black.opacity(0.2), radius: 8)
-                )
-                .padding(.horizontal, 40)
-                .padding(.bottom, 80)
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                        prereqMessage = nil
-                    }
-                }
-        }
-    }
-    
     // MARK: - Helper Functions
     private func isSkillInSelectedBranch(_ skill: SkillNode) -> Bool {
         guard let selectedBranch = selectedBranch else { return true }
@@ -237,7 +223,75 @@ struct EnhancedSkillTreeLayoutView: View {
             showCard = true
         } else {
             let requirementNames = skillManager.getRequirementNames(for: skill.id)
-            prereqMessage = "To unlock \(skill.fullLabel.components(separatedBy: " (").first!), you must first unlock: \(requirementNames.joined(separator: " and "))"
+            let skillName = skill.fullLabel.components(separatedBy: " (").first!
+            prereqMessage = "To unlock \(skillName), you must first unlock: \(requirementNames.joined(separator: " and "))"
+        }
+    }
+}
+
+// MARK: - NEW: Centered Error Message Component
+struct CenteredErrorMessage: View {
+    let message: String
+    let onDismiss: () -> Void
+    @Environment(\.colorScheme) var colorScheme
+    @State private var animateCard = false
+    
+    var body: some View {
+        VStack(spacing: 24) {
+            // Error icon
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 32))
+                .foregroundColor(.orange)
+            
+            // Error message
+            Text(message)
+                .font(.system(size: 16, weight: .medium))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 16)
+                .lineLimit(nil)
+            
+            // Dismiss button
+            Button(action: {
+                withAnimation {
+                    animateCard = false
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    onDismiss()
+                }
+            }) {
+                Text("Got it")
+                    .font(.system(size: 16, weight: .semibold))
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
+                    .background(Color.orange)
+                    .foregroundColor(.white)
+                    .clipShape(Capsule())
+            }
+        }
+        .padding(24)
+        .frame(maxWidth: 320, minHeight: 200)
+        .background(
+            RoundedRectangle(cornerRadius: 28)
+                .fill(colorScheme == .dark ? Color(white: 0.12) : Color.white)
+                .shadow(radius: 16)
+        )
+        .padding(.horizontal, 40)
+        .scaleEffect(animateCard ? 1 : 0.9)
+        .opacity(animateCard ? 1 : 0)
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: animateCard)
+        .onAppear {
+            animateCard = true
+            
+            // Auto-dismiss after 4 seconds
+            DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
+                if animateCard { // Only dismiss if still showing
+                    onDismiss()
+                }
+            }
+        }
+        .onTapGesture {
+            // Allow tapping anywhere on the card to dismiss
+            onDismiss()
         }
     }
 }
