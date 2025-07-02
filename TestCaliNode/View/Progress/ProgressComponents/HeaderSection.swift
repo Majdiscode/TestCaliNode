@@ -1,27 +1,13 @@
 //
-//  ProgressHeaderSection.swift
+//  HeaderSection.swift
 //  TestCaliNode
 //
-//  Created by Majd Iskandarani on 6/27/25.
-//
-
-//
-//  ProgressHeaderSection.swift
-//  TestCaliNode
-//
-//  Created by Majd Iskandarani on 6/27/25.
-//
-
-//
-//  ProgressComponents/ProgressHeaderSection.swift
-//  TestCaliNode
-//
-//  CREATE this as a new file in: View/Progress/ProgressComponents/
+//  Renamed from ProgressHeaderSection.swift - Created by Majd Iskandarani on 6/27/25.
 //
 
 import SwiftUI
 
-struct ProgressHeaderSection: View {
+struct HeaderSection: View {
     @ObservedObject var skillManager: GlobalSkillManager
     
     var body: some View {

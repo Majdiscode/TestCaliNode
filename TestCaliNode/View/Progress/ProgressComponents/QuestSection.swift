@@ -1,27 +1,13 @@
 //
-//  QuestProgressSection.swift
+//  QuestSection.swift
 //  TestCaliNode
 //
-//  Created by Majd Iskandarani on 6/27/25.
-//
-
-//
-//  QuestProgressSection.swift
-//  TestCaliNode
-//
-//  Created by Majd Iskandarani on 6/27/25.
-//
-
-//
-//  ProgressComponents/QuestProgressSection.swift
-//  TestCaliNode
-//
-//  CREATE this as a new file in: View/Progress/ProgressComponents/
+//  Renamed from QuestProgressSection.swift - Created by Majd Iskandarani on 6/27/25.
 //
 
 import SwiftUI
 
-struct QuestProgressSection: View {
+struct QuestSection: View {
     @ObservedObject var questManager: QuestManager
     
     var body: some View {

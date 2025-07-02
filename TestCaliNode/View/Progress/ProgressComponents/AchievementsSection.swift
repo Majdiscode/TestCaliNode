@@ -2,14 +2,7 @@
 //  AchievementsSection.swift
 //  TestCaliNode
 //
-//  Created by Majd Iskandarani on 6/27/25.
-//
-
-//
-//  ProgressComponents/AchievementsSection.swift
-//  TestCaliNode
-//
-//  CREATE this as a new file in: View/Progress/ProgressComponents/
+//  Fixed - Uses split achievement components without duplicates
 //
 
 import SwiftUI
@@ -273,7 +266,7 @@ struct AchievementsSection: View {
     }
 }
 
-// MARK: - Category Filter Button
+// MARK: - Category Filter Button (moved here to avoid duplication)
 struct CategoryFilterButton: View {
     let title: String
     let isSelected: Bool
@@ -293,147 +286,5 @@ struct CategoryFilterButton: View {
                 .foregroundColor(isSelected ? .white : .primary)
         }
         .buttonStyle(PlainButtonStyle())
-    }
-}
-
-// MARK: - Compact Achievements Section
-struct CompactAchievementsSection: View {
-    @ObservedObject var skillManager: GlobalSkillManager
-    let maxDisplayed: Int
-    
-    init(skillManager: GlobalSkillManager, maxDisplayed: Int = 5) {
-        self.skillManager = skillManager
-        self.maxDisplayed = maxDisplayed
-    }
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // Compact header
-            HStack {
-                Text("Recent Achievements")
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.primary)
-                
-                Spacer()
-                
-                let unlockedCount = recentAchievements.filter { $0.isUnlocked }.count
-                Text("\(unlockedCount) unlocked")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            
-            // Compact achievement display
-            HStack(spacing: 12) {
-                ForEach(recentAchievements.prefix(maxDisplayed), id: \.id) { achievement in
-                    CompactAchievementBadge(achievement: achievement, size: 40)
-                }
-                
-                if recentAchievements.count > maxDisplayed {
-                    Text("+\(recentAchievements.count - maxDisplayed)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .frame(width: 40, height: 40)
-                        .background(Circle().fill(Color.gray.opacity(0.2)))
-                }
-            }
-        }
-    }
-    
-    private var recentAchievements: [AchievementData] {
-        // Create achievements list directly here instead of accessing from AchievementsSection
-        let achievements = [
-            AchievementData(
-                id: "first_skill",
-                title: "First Steps",
-                description: "Unlock your first skill",
-                emoji: "🎯",
-                isUnlocked: skillManager.globalLevel >= 1,
-                unlockedDate: skillManager.globalLevel >= 1 ? Date() : nil,
-                category: .skillTree,
-                rarity: .common
-            ),
-            AchievementData(
-                id: "foundational_complete",
-                title: "Strong Foundation",
-                description: "Complete all foundational skills",
-                emoji: "🏗️",
-                isUnlocked: foundationalSkillsComplete,
-                unlockedDate: foundationalSkillsComplete ? Date() : nil,
-                category: .skillTree,
-                rarity: .rare
-            ),
-            AchievementData(
-                id: "first_branch",
-                title: "Branch Explorer",
-                description: "Master your first branch",
-                emoji: "🌿",
-                isUnlocked: masteredBranchesCount >= 1,
-                unlockedDate: masteredBranchesCount >= 1 ? Date() : nil,
-                category: .skillTree,
-                rarity: .epic
-            ),
-            AchievementData(
-                id: "tree_complete",
-                title: "Tree Master",
-                description: "Complete any skill tree",
-                emoji: "🌳",
-                isUnlocked: completedTreesCount >= 1,
-                unlockedDate: completedTreesCount >= 1 ? Date() : nil,
-                category: .milestone,
-                rarity: .epic
-            ),
-            AchievementData(
-                id: "master_skill",
-                title: "Master Achiever",
-                description: "Unlock a master skill",
-                emoji: "👑",
-                isUnlocked: masterSkillsUnlocked >= 1,
-                unlockedDate: masterSkillsUnlocked >= 1 ? Date() : nil,
-                category: .milestone,
-                rarity: .legendary
-            )
-        ]
-        
-        return achievements.sorted { achievement1, achievement2 in
-            // Prioritize unlocked achievements and higher rarity
-            if achievement1.isUnlocked != achievement2.isUnlocked {
-                return achievement1.isUnlocked
-            }
-            return achievement1.rarity.rawValue > achievement2.rarity.rawValue
-        }
-    }
-    
-    // Helper computed properties for CompactAchievementsSection
-    private var foundationalSkillsComplete: Bool {
-        let foundationalSkills = allEnhancedSkillTrees.flatMap { $0.foundationalSkills }
-        return foundationalSkills.allSatisfy { skillManager.isUnlocked($0.id) }
-    }
-    
-    private var completedTreesCount: Int {
-        let allTrees = ["pull", "push", "core", "legs"]
-        return allTrees.filter { treeID in
-            let progress = skillManager.getTreeProgress(treeID)
-            return progress.unlocked == progress.total && progress.total > 0
-        }.count
-    }
-    
-    private var masteredBranchesCount: Int {
-        var count = 0
-        for tree in allEnhancedSkillTrees {
-            for branch in tree.branches {
-                let branchSkillIDs = branch.skills.map(\.id)
-                let unlockedInBranch = branchSkillIDs.filter { skillManager.isUnlocked($0) }.count
-                if unlockedInBranch == branchSkillIDs.count && !branchSkillIDs.isEmpty {
-                    count += 1
-                }
-            }
-        }
-        return count
-    }
-    
-    private var masterSkillsUnlocked: Int {
-        let masterSkills = allEnhancedSkillTrees.flatMap { $0.masterSkills }
-        return masterSkills.filter { skillManager.isUnlocked($0.id) }.count
     }
 }

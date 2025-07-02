@@ -1,27 +1,13 @@
 //
-//  OverallProgressSection.swift
+//  OverallSection.swift
 //  TestCaliNode
 //
-//  Created by Majd Iskandarani on 6/27/25.
-//
-
-//
-//  OverallProgressSection.swift
-//  TestCaliNode
-//
-//  Created by Majd Iskandarani on 6/27/25.
-//
-
-//
-//  ProgressComponents/OverallProgressSection.swift
-//  TestCaliNode
-//
-//  CREATE this as a new file in: View/Progress/ProgressComponents/
+//  Renamed from OverallProgressSection.swift - Created by Majd Iskandarani on 6/27/25.
 //
 
 import SwiftUI
 
-struct OverallProgressSection: View {
+struct OverallSection: View {
     @ObservedObject var skillManager: GlobalSkillManager
     
     var body: some View {

@@ -2,7 +2,7 @@
 //  ProgressDashboard.swift
 //  TestCaliNode
 //
-//  Clean Progress Dashboard - Updated by Majd Iskandarani on 6/27/25.
+//  Clean Progress Dashboard - Updated imports for renamed components
 //
 
 import SwiftUI
@@ -17,14 +17,14 @@ struct ProgressDashboard: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 32) {
-                // Header Section
-                ProgressHeaderSection(skillManager: skillManager)
+                // Header Section - Updated import
+                HeaderSection(skillManager: skillManager)
                 
-                // Overall Progress Section
-                OverallProgressSection(skillManager: skillManager)
+                // Overall Progress Section - Updated import
+                OverallSection(skillManager: skillManager)
                 
-                // Quest Progress Section
-                QuestProgressSection(questManager: questManager)
+                // Quest Progress Section - Updated import
+                QuestSection(questManager: questManager)
                 
                 // Skill Trees Section
                 SkillTreeSection(skillManager: skillManager)
