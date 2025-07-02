@@ -1,8 +1,8 @@
 //
-//  MinimalistPullTreeData.swift
+//  PullTreeData.swift
 //  TestCaliNode
 //
-//  Created by Majd Iskandarani on 6/14/25.
+//  FIXED VERSION - Replace your existing PullTreeData.swift
 //
 
 import Foundation
@@ -13,7 +13,7 @@ let enhancedPullTreeV1 = EnhancedSkillTreeModel(
     name: "Pull Tree",
     version: 1,
     
-    // FOUNDATIONAL SKILLS - Much more spacing
+    // FOUNDATIONAL SKILLS
     foundationalSkills: [
         SkillNode(
             id: "deadHang",
@@ -57,14 +57,14 @@ let enhancedPullTreeV1 = EnhancedSkillTreeModel(
     ],
     
     foundationalPositions: [
-        "deadHang": CGPoint(x: 200, y: 1000),      // Start much lower
-        "scapularPulls": CGPoint(x: 200, y: 800),  // 200pt spacing
-        "pullUp": CGPoint(x: 200, y: 600)          // 200pt spacing
+        "deadHang": CGPoint(x: 200, y: 1000),
+        "scapularPulls": CGPoint(x: 200, y: 800),
+        "pullUp": CGPoint(x: 200, y: 600)
     ],
     
-    // SPECIALIZED BRANCHES - Much wider spacing
+    // SPECIALIZED BRANCHES
     branches: [
-        // EXPLOSIVE BRANCH - Left side with more space
+        // EXPLOSIVE BRANCH
         SkillBranch(
             id: "explosive",
             name: "Explosive",
@@ -99,12 +99,12 @@ let enhancedPullTreeV1 = EnhancedSkillTreeModel(
                 )
             ],
             positions: [
-                "chestTouchPullup": CGPoint(x: 60, y: 450),   // Far left, more spacing
-                "muscleUp": CGPoint(x: 60, y: 250)            // 200pt spacing
+                "chestTouchPullup": CGPoint(x: 60, y: 450),
+                "muscleUp": CGPoint(x: 60, y: 250)
             ]
         ),
         
-        // ISOMETRIC HOLDS BRANCH - Center with cleaner spacing
+        // ISOMETRIC HOLDS BRANCH
         SkillBranch(
             id: "isometric",
             name: "Isometric",
@@ -152,13 +152,13 @@ let enhancedPullTreeV1 = EnhancedSkillTreeModel(
                 )
             ],
             positions: [
-                "flexedHang": CGPoint(x: 200, y: 450),        // Center
-                "frontLeverTuck": CGPoint(x: 200, y: 300),    // 150pt spacing
-                "frontLever": CGPoint(x: 200, y: 150)         // 150pt spacing
+                "flexedHang": CGPoint(x: 200, y: 450),
+                "frontLeverTuck": CGPoint(x: 200, y: 300),
+                "frontLever": CGPoint(x: 200, y: 150)
             ]
         ),
         
-        // UNILATERAL BRANCH - Right side with more space
+        // UNILATERAL BRANCH
         SkillBranch(
             id: "unilateral",
             name: "Unilateral",
@@ -193,13 +193,13 @@ let enhancedPullTreeV1 = EnhancedSkillTreeModel(
                 )
             ],
             positions: [
-                "archerPullup": CGPoint(x: 340, y: 450),      // Far right, more spacing
-                "oneArmPullup": CGPoint(x: 340, y: 250)       // 200pt spacing
+                "archerPullup": CGPoint(x: 340, y: 450),
+                "oneArmPullup": CGPoint(x: 340, y: 250)
             ]
         )
     ],
     
-    // MASTER SKILLS - Single skill at top with lots of space
+    // MASTER SKILLS
     masterSkills: [
         SkillNode(
             id: "oneArmFrontLever",
@@ -217,6 +217,6 @@ let enhancedPullTreeV1 = EnhancedSkillTreeModel(
     ],
     
     masterPositions: [
-        "oneArmFrontLever": CGPoint(x: 200, y: 50)  // Top with lots of space above branches
+        "oneArmFrontLever": CGPoint(x: 200, y: 50)
     ]
 )
