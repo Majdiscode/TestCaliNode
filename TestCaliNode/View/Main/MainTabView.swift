@@ -2,7 +2,7 @@
 //  MainTabView.swift
 //  TestCaliNode
 //
-//  SIMPLE FIX - Just update this existing file
+//  CLEAN VERSION - Only contains MainTabView, no other view definitions
 //
 
 import SwiftUI
@@ -14,7 +14,7 @@ struct MainTabView: View {
     
     var body: some View {
         TabView {
-            // Skills Tab - CHANGE THIS LINE
+            // Skills Tab
             SkillTreeContainer(skillManager: skillManager)
                 .tabItem {
                     Label("Skills", systemImage: "tree")
@@ -40,10 +40,10 @@ struct MainTabView: View {
                     Label("Progress", systemImage: "chart.pie")
                 }
 
-            // Logout Tab
-            LogoutView()
+            // Settings Tab
+            EnhancedSettingsView(skillManager: skillManager, questManager: questManager)
                 .tabItem {
-                    Label("Logout", systemImage: "rectangle.portrait.and.arrow.right")
+                    Label("Settings", systemImage: "gearshape")
                 }
         }
         .onAppear {
@@ -53,5 +53,5 @@ struct MainTabView: View {
     }
 }
 
-// DELETE the SkillTreeViewWithManager struct at the bottom of this file
-// It's causing the conflict
+// IMPORTANT: Remove ALL other struct definitions from this file
+// Each view should be in its own separate file

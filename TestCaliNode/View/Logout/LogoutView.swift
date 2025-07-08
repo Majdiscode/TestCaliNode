@@ -1,48 +1,63 @@
+//
+//  LogoutView.swift
+//  TestCaliNode
+//
+//  Fixed version with performLogout method
+//
+
 import SwiftUI
-import FirebaseSignInWithApple      // 🧩 Apple
-import FirebaseAuth                 // 🧩 Google
-import GoogleSignIn                 // 🧩 Google
+import FirebaseSignInWithApple
+import FirebaseAuth
+import GoogleSignIn
 
 struct LogoutView: View {
     @State private var err: String = ""
+    @State private var showingConfirmation = false
 
     var body: some View {
-        VStack(spacing: 20) {
-            // 🔐 Apple: Sign Out Button
-            FirebaseSignOutWithAppleButton {
-                FirebaseSignInWithAppleLabel(.signOut)
-            }
-
-            // 🗑 Apple: Delete Account Button
-            FirebaseDeleteAccountWithAppleButton {
-                FirebaseSignInWithAppleLabel(.deleteAccount)
-            }
-
-            // 🔐 Google: Sign Out Button
-            Button {
-                Task {
-                    do {
-                        try await logoutFromGoogle()
-                    } catch let e {
-                        err = e.localizedDescription
-                    }
+        NavigationView {
+            VStack(spacing: 20) {
+                // 🔐 Apple: Sign Out Button
+                FirebaseSignOutWithAppleButton {
+                    FirebaseSignInWithAppleLabel(.signOut)
                 }
-            } label: {
-                Text("Log Out from Google").padding(8)
-            }
-            .buttonStyle(.borderedProminent)
 
-            // 🧩 Error Display
-            if !err.isEmpty {
-                Text(err)
-                    .foregroundColor(.red)
-                    .font(.caption)
+                // 🗑 Apple: Delete Account Button
+                FirebaseDeleteAccountWithAppleButton {
+                    FirebaseSignInWithAppleLabel(.deleteAccount)
+                }
+
+                // 🔐 Google: Sign Out Button
+                Button {
+                    performLogout()
+                } label: {
+                    Text("Log Out from Google").padding(8)
+                }
+                .buttonStyle(.borderedProminent)
+
+                // 🧩 Error Display
+                if !err.isEmpty {
+                    Text(err)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                }
             }
+            .padding()
+            .navigationTitle("Sign Out")
         }
-        .padding()
     }
 
     // 🧩 Google Sign-Out Logic with notification
+    private func performLogout() {
+        Task {
+            do {
+                try await logoutFromGoogle()
+            } catch {
+                err = error.localizedDescription
+            }
+        }
+    }
+    
     private func logoutFromGoogle() async throws {
         GIDSignIn.sharedInstance.signOut()
 
@@ -59,8 +74,4 @@ struct LogoutView: View {
             throw error
         }
     }
-}
-
-#Preview {
-    LogoutView()
 }
