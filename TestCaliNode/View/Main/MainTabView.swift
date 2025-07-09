@@ -2,14 +2,13 @@
 //  MainTabView.swift
 //  TestCaliNode
 //
-//  CLEAN VERSION - Only contains MainTabView, no other view definitions
+//  CLEAN VERSION - Quest badges and integrations removed
 //
 
 import SwiftUI
 
 struct MainTabView: View {
     @StateObject private var skillManager = GlobalSkillManager()
-    @StateObject private var questManager = QuestManager.shared
     @StateObject private var workoutManager = WorkoutManager()
     
     var body: some View {
@@ -19,7 +18,7 @@ struct MainTabView: View {
                 .tabItem {
                     Label("Skills", systemImage: "tree")
                 }
-                .badge(questManager.activeQuests.count > 0 ? questManager.activeQuests.count : 0)
+                // REMOVED: quest badge
             
             // Workout Tracker Tab
             WorkoutTrackerView(workoutManager: workoutManager)
@@ -27,31 +26,25 @@ struct MainTabView: View {
                     Label("Workouts", systemImage: "figure.strengthtraining.traditional")
                 }
             
-            // Quests Tab
-            QuestView(questManager: questManager)
+            // Quests Tab (Blank)
+            QuestView()
                 .tabItem {
                     Label("Quests", systemImage: "flag.fill")
                 }
-                .badge(questManager.availableQuests.count > 0 ? questManager.availableQuests.count : 0)
+                // REMOVED: quest badge
             
             // Progress Tab
-            ProgressDashboard(skillManager: skillManager, questManager: questManager)
+            ProgressDashboard(skillManager: skillManager)
                 .tabItem {
                     Label("Progress", systemImage: "chart.pie")
                 }
 
             // Settings Tab
-            EnhancedSettingsView(skillManager: skillManager, questManager: questManager)
+            EnhancedSettingsView(skillManager: skillManager)
                 .tabItem {
                     Label("Settings", systemImage: "gearshape")
                 }
         }
-        .onAppear {
-            questManager.setSkillManager(skillManager)
-            questManager.refreshAvailableQuests()
-        }
+        // REMOVED: Quest manager initialization and setup
     }
 }
-
-// IMPORTANT: Remove ALL other struct definitions from this file
-// Each view should be in its own separate file

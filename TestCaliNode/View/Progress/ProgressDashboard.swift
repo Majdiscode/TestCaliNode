@@ -2,7 +2,7 @@
 //  ProgressDashboard.swift
 //  TestCaliNode
 //
-//  Clean Progress Dashboard - Updated imports for renamed components
+//  Final Cleaned Progress Dashboard - Quest References Removed
 //
 
 import SwiftUI
@@ -11,20 +11,19 @@ import SwiftUI
 
 struct ProgressDashboard: View {
     @ObservedObject var skillManager: GlobalSkillManager
-    @ObservedObject var questManager: QuestManager
+    // REMOVED: questManager parameter
     @State private var showResetConfirmation = false
     
     var body: some View {
         ScrollView {
             VStack(spacing: 32) {
-                // Header Section - Updated import
+                // Header Section
                 HeaderSection(skillManager: skillManager)
                 
-                // Overall Progress Section - Updated import
+                // Overall Progress Section
                 OverallSection(skillManager: skillManager)
                 
-                // Quest Progress Section - Updated import
-                QuestSection(questManager: questManager)
+                // REMOVED: Quest Progress Section
                 
                 // Skill Trees Section
                 SkillTreeSection(skillManager: skillManager)
@@ -38,10 +37,9 @@ struct ProgressDashboard: View {
                 // Statistics Section
                 StatisticsSection(skillManager: skillManager)
                 
-                // Danger Zone Section
+                // Fixed Danger Zone Section (Quest management removed)
                 DangerZoneSection(
                     skillManager: skillManager,
-                    questManager: questManager,
                     showResetConfirmation: $showResetConfirmation
                 )
                 

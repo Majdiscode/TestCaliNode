@@ -1,15 +1,8 @@
 //
-//  EnhancedLegsTreeData.swift
+//  UpdatedLegsTreeData.swift
 //  TestCaliNode
 //
-//  Created by Majd Iskandarani on 6/14/25.
-//
-
-//
-//  EnhancedLegsTreeData.swift
-//  TestCaliNode
-//
-//  Created by Majd Iskandarani on 6/14/25.
+//  NEW UNLOCK LOGIC - Prerequisites to unlock next skill
 //
 
 import Foundation
@@ -20,17 +13,17 @@ let enhancedLegsTreeV1 = EnhancedSkillTreeModel(
     name: "Legs Tree",
     version: 1,
     
-    // FOUNDATIONAL SKILLS - Basic leg strength and mobility
+    // FOUNDATIONAL SKILLS - Basic leg strength and mobility (TWO SEPARATE STARTING POINTS)
     foundationalSkills: [
         SkillNode(
             id: "bodyweightSquat",
             label: "🪑",
-            fullLabel: "Bodyweight Squat (2x15)",
+            fullLabel: "Bodyweight Squat (2x12)",
             tree: "legs",
             requires: [],
             variationLevel: 0,
             version: 1,
-            confirmPrompt: "Can you do 2 sets of 15 Bodyweight Squats?",
+            confirmPrompt: "Can you do 2 sets of 5 bodyweight squats?", // ✅ Easy entry requirement
             unlocked: false,
             masteryLevel: nil,
             logHistory: []
@@ -38,12 +31,12 @@ let enhancedLegsTreeV1 = EnhancedSkillTreeModel(
         SkillNode(
             id: "wallSit",
             label: "🧱",
-            fullLabel: "Wall Sit (45s)",
+            fullLabel: "Wall Sit (60s)",
             tree: "legs",
             requires: [],
             variationLevel: 0,
             version: 1,
-            confirmPrompt: "Can you hold a Wall Sit for 45 seconds?",
+            confirmPrompt: "Can you hold a wall sit for 15 seconds?", // ✅ Easy entry requirement (separate from squats)
             unlocked: false,
             masteryLevel: nil,
             logHistory: []
@@ -51,12 +44,12 @@ let enhancedLegsTreeV1 = EnhancedSkillTreeModel(
         SkillNode(
             id: "stepUp",
             label: "🦵⬆️",
-            fullLabel: "Step Ups (2x12)",
+            fullLabel: "Step Ups (2x10)",
             tree: "legs",
             requires: ["bodyweightSquat", "wallSit"],
             variationLevel: 0,
             version: 1,
-            confirmPrompt: "Can you do 2 sets of 12 Step Ups per leg?",
+            confirmPrompt: "Can you do 2 sets of 12 bodyweight squats AND hold a wall sit for 60 seconds?", // ✅ Prerequisites: both foundation movements mastered
             unlocked: false,
             masteryLevel: nil,
             logHistory: []
@@ -81,12 +74,12 @@ let enhancedLegsTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "jumpSquat",
                     label: "🦘",
-                    fullLabel: "Jump Squat (2x10)",
+                    fullLabel: "Jump Squat (2x8)",
                     tree: "legs",
                     requires: ["stepUp"],
                     variationLevel: 1,
                     version: 1,
-                    confirmPrompt: "Can you do 2 sets of 10 Jump Squats?",
+                    confirmPrompt: "Can you do 2 sets of 10 step ups per leg?", // ✅ Prerequisite: step-up strength and coordination
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -94,12 +87,12 @@ let enhancedLegsTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "sissySquat",
                     label: "👸",
-                    fullLabel: "Sissy Squat (2x8)",
+                    fullLabel: "Sissy Squat (2x6)",
                     tree: "legs",
                     requires: ["jumpSquat"],
                     variationLevel: 2,
                     version: 1,
-                    confirmPrompt: "Can you do 2 sets of 8 Sissy Squats?",
+                    confirmPrompt: "Can you do 2 sets of 8 jump squats?", // ✅ Prerequisite: explosive bilateral power
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -107,12 +100,12 @@ let enhancedLegsTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "shrimpSquat",
                     label: "🦐",
-                    fullLabel: "Shrimp Squat (1x3)",
+                    fullLabel: "Shrimp Squat (1x2)",
                     tree: "legs",
                     requires: ["sissySquat"],
                     variationLevel: 3,
                     version: 1,
-                    confirmPrompt: "Can you do 3 Shrimp Squats per leg?",
+                    confirmPrompt: "Can you do 2 sets of 6 sissy squats?", // ✅ Prerequisite: quad strength and knee mobility
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -135,12 +128,12 @@ let enhancedLegsTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "bulgaianSplitSquat",
                     label: "🇧🇬",
-                    fullLabel: "Bulgarian Split Squat (2x10)",
+                    fullLabel: "Bulgarian Split Squat (2x8)",
                     tree: "legs",
                     requires: ["stepUp"],
                     variationLevel: 1,
                     version: 1,
-                    confirmPrompt: "Can you do 2 sets of 10 Bulgarian Split Squats per leg?",
+                    confirmPrompt: "Can you do 2 sets of 10 step ups per leg?", // ✅ Prerequisite: single-leg coordination
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -148,12 +141,12 @@ let enhancedLegsTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "assistedPistolSquat",
                     label: "🦿🤝",
-                    fullLabel: "Assisted Pistol Squat (2x8)",
+                    fullLabel: "Assisted Pistol Squat (2x6)",
                     tree: "legs",
                     requires: ["bulgaianSplitSquat"],
                     variationLevel: 2,
                     version: 1,
-                    confirmPrompt: "Can you do 2 sets of 8 Assisted Pistol Squats per leg?",
+                    confirmPrompt: "Can you do 2 sets of 8 Bulgarian split squats per leg?", // ✅ Prerequisite: split squat strength
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -161,12 +154,12 @@ let enhancedLegsTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "pistolSquat",
                     label: "🦿",
-                    fullLabel: "Pistol Squat (1x5)",
+                    fullLabel: "Pistol Squat (1x3)",
                     tree: "legs",
                     requires: ["assistedPistolSquat"],
                     variationLevel: 3,
                     version: 1,
-                    confirmPrompt: "Can you do 5 Pistol Squats per leg?",
+                    confirmPrompt: "Can you do 2 sets of 6 assisted pistol squats per leg?", // ✅ Prerequisite: assisted pistol progression
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -189,12 +182,12 @@ let enhancedLegsTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "broadJump",
                     label: "🏃‍♂️",
-                    fullLabel: "Broad Jump (3x5)",
+                    fullLabel: "Broad Jump (3x4)",
                     tree: "legs",
                     requires: ["stepUp"],
                     variationLevel: 1,
                     version: 1,
-                    confirmPrompt: "Can you do 3 sets of 5 Broad Jumps?",
+                    confirmPrompt: "Can you do 2 sets of 10 step ups per leg?", // ✅ Prerequisite: leg coordination and power base
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -202,12 +195,12 @@ let enhancedLegsTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "boxJump",
                     label: "📦⬆️",
-                    fullLabel: "Box Jump 24\" (3x8)",
+                    fullLabel: "Box Jump 24\" (3x6)",
                     tree: "legs",
                     requires: ["broadJump"],
                     variationLevel: 2,
                     version: 1,
-                    confirmPrompt: "Can you do 3 sets of 8 Box Jumps (24 inches)?",
+                    confirmPrompt: "Can you do 3 sets of 4 broad jumps?", // ✅ Prerequisite: horizontal jumping power
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -215,12 +208,12 @@ let enhancedLegsTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "depthJump",
                     label: "⚡",
-                    fullLabel: "Depth Jump (3x5)",
+                    fullLabel: "Depth Jump (3x4)",
                     tree: "legs",
                     requires: ["boxJump"],
                     variationLevel: 3,
                     version: 1,
-                    confirmPrompt: "Can you do 3 sets of 5 Depth Jumps?",
+                    confirmPrompt: "Can you do 3 sets of 6 box jumps (24 inches)?", // ✅ Prerequisite: vertical jumping and landing control
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -244,7 +237,7 @@ let enhancedLegsTreeV1 = EnhancedSkillTreeModel(
             requires: ["shrimpSquat", "pistolSquat", "depthJump"], // Cross-branch requirement
             variationLevel: 6,
             version: 1,
-            confirmPrompt: "Can you do a Dragon Squat?",
+            confirmPrompt: "Can you do 2 shrimp squats per leg AND 3 pistol squats per leg AND 4 depth jumps?", // ✅ Prerequisites: all three branch paths mastered
             unlocked: false,
             masteryLevel: nil,
             logHistory: []

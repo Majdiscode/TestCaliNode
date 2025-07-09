@@ -2,13 +2,13 @@
 //  SkillTreeComponents.swift
 //  TestCaliNode
 //
-//  Created by Majd Iskandarani on 6/14/25.
+//  CLEANED VERSION - No conflicts
 //
 
 import SwiftUI
 
-// Enhanced Skill Circle with branch coloring
-struct EnhancedSkillCircle: View {
+// MARK: - Basic Skill Circle Component
+struct BasicSkillCircle: View {
     let label: String
     let unlocked: Bool
     let branchColor: Color?
@@ -32,8 +32,8 @@ struct EnhancedSkillCircle: View {
     }
 }
 
-// Enhanced Line Connector with colored lines
-struct EnhancedLineConnector: View {
+// MARK: - Colored Line Connector
+struct StyledLineConnector: View {
     let from: CGPoint
     let to: CGPoint
     let color: Color

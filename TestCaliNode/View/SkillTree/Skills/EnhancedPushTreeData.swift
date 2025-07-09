@@ -1,10 +1,9 @@
 //
-//  EnhancedPushTreeData.swift
+//  UpdatedPushTreeData.swift
 //  TestCaliNode
 //
-//  Created by Majd Iskandarani on 6/14/25.
+//  NEW UNLOCK LOGIC - Prerequisites to unlock next skill
 //
-
 
 import Foundation
 import SwiftUI
@@ -19,12 +18,12 @@ let enhancedPushTreeV1 = EnhancedSkillTreeModel(
         SkillNode(
             id: "kneePushup",
             label: "🦵",
-            fullLabel: "Knee Push-Up (2x10)",
+            fullLabel: "Knee Push-Up (2x8)",
             tree: "push",
             requires: [],
             variationLevel: 0,
             version: 1,
-            confirmPrompt: "Can you do 2 sets of 10 Knee Push-Ups?",
+            confirmPrompt: "Can you do 2 sets of 3 knee push-ups?", // ✅ Easy entry requirement
             unlocked: false,
             masteryLevel: nil,
             logHistory: []
@@ -32,12 +31,12 @@ let enhancedPushTreeV1 = EnhancedSkillTreeModel(
         SkillNode(
             id: "inclinePushup",
             label: "📐",
-            fullLabel: "Incline Push-Up (2x8)",
+            fullLabel: "Incline Push-Up (2x6)",
             tree: "push",
             requires: ["kneePushup"],
             variationLevel: 0,
             version: 1,
-            confirmPrompt: "Can you do 2 sets of 8 Incline Push-Ups?",
+            confirmPrompt: "Can you do 2 sets of 8 knee push-ups?", // ✅ Prerequisite: solid knee push-up strength
             unlocked: false,
             masteryLevel: nil,
             logHistory: []
@@ -45,12 +44,12 @@ let enhancedPushTreeV1 = EnhancedSkillTreeModel(
         SkillNode(
             id: "pushup",
             label: "🙌",
-            fullLabel: "Push-Up (2x10)",
+            fullLabel: "Push-Up (2x8)",
             tree: "push",
             requires: ["inclinePushup"],
             variationLevel: 0,
             version: 1,
-            confirmPrompt: "Can you do 2 sets of 10 Push-Ups?",
+            confirmPrompt: "Can you do 2 sets of 6 incline push-ups?", // ✅ Prerequisite: incline progression
             unlocked: false,
             masteryLevel: nil,
             logHistory: []
@@ -75,12 +74,12 @@ let enhancedPushTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "declinePushup",
                     label: "⬆️",
-                    fullLabel: "Decline Push-Up (2x8)",
+                    fullLabel: "Decline Push-Up (2x6)",
                     tree: "push",
                     requires: ["pushup"],
                     variationLevel: 1,
                     version: 1,
-                    confirmPrompt: "Can you do 2 sets of 8 Decline Push-Ups?",
+                    confirmPrompt: "Can you do 2 sets of 10 push-ups?", // ✅ Prerequisite: push-up volume
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -88,12 +87,12 @@ let enhancedPushTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "diamondPushup",
                     label: "💎",
-                    fullLabel: "Diamond Push-Up (2x6)",
+                    fullLabel: "Diamond Push-Up (2x4)",
                     tree: "push",
                     requires: ["declinePushup"],
                     variationLevel: 2,
                     version: 1,
-                    confirmPrompt: "Can you do 2 sets of 6 Diamond Push-Ups?",
+                    confirmPrompt: "Can you do 2 sets of 6 decline push-ups?", // ✅ Prerequisite: decline strength
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -101,12 +100,12 @@ let enhancedPushTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "oneArmPushup",
                     label: "☝️",
-                    fullLabel: "One-Arm Push-Up (1x3)",
+                    fullLabel: "One-Arm Push-Up (1x2)",
                     tree: "push",
                     requires: ["diamondPushup"],
                     variationLevel: 3,
                     version: 1,
-                    confirmPrompt: "Can you do 3 One-Arm Push-Ups?",
+                    confirmPrompt: "Can you do 2 sets of 4 diamond push-ups?", // ✅ Prerequisite: tricep/close-grip strength
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -129,12 +128,12 @@ let enhancedPushTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "widePushup",
                     label: "🤝",
-                    fullLabel: "Wide Push-Up (2x12)",
+                    fullLabel: "Wide Push-Up (2x10)",
                     tree: "push",
                     requires: ["pushup"],
                     variationLevel: 1,
                     version: 1,
-                    confirmPrompt: "Can you do 2 sets of 12 Wide Push-Ups?",
+                    confirmPrompt: "Can you do 2 sets of 8 push-ups?", // ✅ Prerequisite: basic push-up endurance
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -142,12 +141,12 @@ let enhancedPushTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "endurancePushup",
                     label: "🔥",
-                    fullLabel: "Endurance Push-Up (1x25)",
+                    fullLabel: "Endurance Push-Up (1x20)",
                     tree: "push",
                     requires: ["widePushup"],
                     variationLevel: 2,
                     version: 1,
-                    confirmPrompt: "Can you do 25 consecutive Push-Ups?",
+                    confirmPrompt: "Can you do 2 sets of 10 wide push-ups?", // ✅ Prerequisite: wide grip endurance
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -160,7 +159,7 @@ let enhancedPushTreeV1 = EnhancedSkillTreeModel(
                     requires: ["endurancePushup"],
                     variationLevel: 3,
                     version: 1,
-                    confirmPrompt: "Can you do 100 consecutive Push-Ups?",
+                    confirmPrompt: "Can you do 20 consecutive push-ups?", // ✅ Prerequisite: significant endurance base
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -183,12 +182,12 @@ let enhancedPushTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "handstandWallHold",
                     label: "🤸",
-                    fullLabel: "Handstand Wall Hold (30s)",
+                    fullLabel: "Handstand Wall Hold (45s)",
                     tree: "push",
                     requires: ["pushup"],
                     variationLevel: 1,
                     version: 1,
-                    confirmPrompt: "Can you hold a Handstand against wall for 30 seconds?",
+                    confirmPrompt: "Can you do 2 sets of 8 push-ups?", // ✅ Prerequisite: basic push strength for handstand prep
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -196,12 +195,12 @@ let enhancedPushTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "freeHandstand",
                     label: "🤸‍♂️",
-                    fullLabel: "Free Handstand (10s)",
+                    fullLabel: "Free Handstand (15s)",
                     tree: "push",
                     requires: ["handstandWallHold"],
                     variationLevel: 2,
                     version: 1,
-                    confirmPrompt: "Can you hold a free Handstand for 10 seconds?",
+                    confirmPrompt: "Can you hold a wall handstand for 45 seconds?", // ✅ Prerequisite: wall handstand mastery
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -209,12 +208,12 @@ let enhancedPushTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "handstandPushup",
                     label: "🤸‍♂️💪",
-                    fullLabel: "Handstand Push-Up (1x3)",
+                    fullLabel: "Handstand Push-Up (1x2)",
                     tree: "push",
                     requires: ["freeHandstand"],
                     variationLevel: 3,
                     version: 1,
-                    confirmPrompt: "Can you do 3 Handstand Push-Ups?",
+                    confirmPrompt: "Can you hold a free handstand for 15 seconds?", // ✅ Prerequisite: free handstand stability
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -238,7 +237,7 @@ let enhancedPushTreeV1 = EnhancedSkillTreeModel(
             requires: ["oneArmPushup", "handstandPushup"], // Cross-branch requirement
             variationLevel: 6,
             version: 1,
-            confirmPrompt: "Can you do a One-Arm Handstand Push-Up?",
+            confirmPrompt: "Can you do 2 one-arm push-ups AND 2 handstand push-ups?", // ✅ Prerequisites: both strength paths mastered
             unlocked: false,
             masteryLevel: nil,
             logHistory: []

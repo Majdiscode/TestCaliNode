@@ -3,10 +3,8 @@
 //  TestCaliNode
 //
 //  Created by Majd Iskandarani on 7/7/25.
+//  Cleaned Version - Quest Manager Extensions Removed
 //
-
-// CREATE: TestCaliNode/Services/ErrorHandling.swift
-// Better error handling for user-facing operations
 
 import Foundation
 import SwiftUI
@@ -18,7 +16,6 @@ enum AppError: LocalizedError {
     case dataCorrupted
     case authenticationRequired
     case skillNotFound(String)
-    case questNotFound(String)
     case firebaseError(Error)
     case unknownError(Error)
     
@@ -32,8 +29,6 @@ enum AppError: LocalizedError {
             return "Please sign in to save your progress."
         case .skillNotFound(let skillID):
             return "Skill '\(skillID)' not found. Please restart the app."
-        case .questNotFound(let questID):
-            return "Quest '\(questID)' not found. Please restart the app."
         case .firebaseError(let error):
             return "Server error: \(error.localizedDescription)"
         case .unknownError(let error):
@@ -49,7 +44,7 @@ enum AppError: LocalizedError {
             return "Try restarting the app or resetting your data."
         case .authenticationRequired:
             return "Sign in to continue saving your progress."
-        case .skillNotFound, .questNotFound:
+        case .skillNotFound:
             return "Restart the app to reload the latest data."
         case .firebaseError, .unknownError:
             return "If this continues, please contact support."
@@ -60,7 +55,7 @@ enum AppError: LocalizedError {
         switch self {
         case .networkUnavailable, .authenticationRequired:
             return .warning
-        case .dataCorrupted, .skillNotFound, .questNotFound:
+        case .dataCorrupted, .skillNotFound:
             return .error
         case .firebaseError, .unknownError:
             return .critical
@@ -328,29 +323,7 @@ extension GlobalSkillManager {
     }
 }
 
-extension QuestManager {
-    
-    func startQuestSafely(_ questID: String) {
-        do {
-            guard availableQuests.contains(where: { $0.id == questID }) else {
-                throw AppError.questNotFound(questID)
-            }
-            
-            startQuest(questID)
-            
-        } catch {
-            ErrorHandler.shared.handle(error, context: "Starting quest \(questID)")
-        }
-    }
-    
-    func saveQuestProgressSafely() {
-        do {
-            saveQuestProgress()
-        } catch {
-            ErrorHandler.shared.handleSilently(error, context: "Auto-saving quest progress")
-        }
-    }
-}
+// REMOVED: QuestManager extensions (no longer needed)
 
 extension WorkoutManager {
     
@@ -478,11 +451,10 @@ struct RetryOperation<T> {
     }
 }
 
-// MARK: - Usage Examples
+// MARK: - Usage Examples (Simplified - Quest Manager Removed)
 
 struct SafeOperationExamples: View {
     @ObservedObject var skillManager: GlobalSkillManager
-    @ObservedObject var questManager: QuestManager
     
     var body: some View {
         VStack {
@@ -491,23 +463,7 @@ struct SafeOperationExamples: View {
                 skillManager.unlockSafely("deadHang")
             }
             
-            // Example 2: Network operation with retry
-            Button("Save with Retry") {
-                Task {
-                    let retryOperation = RetryOperation(maxAttempts: 3, delay: 1.0) {
-                        questManager.saveQuestProgress()
-                    }
-                    
-                    do {
-                        try await retryOperation.execute()
-                        print("✅ Save successful")
-                    } catch {
-                        ErrorHandler.shared.handle(error, context: "Auto-save with retry")
-                    }
-                }
-            }
-            
-            // Example 3: View with error handling
+            // Example 2: View with error handling
             Text("This view has error handling")
                 .errorHandling {
                     // Retry logic

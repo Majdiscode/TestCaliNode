@@ -1,8 +1,8 @@
 //
-//  PullTreeData.swift
+//  UpdatedPullTreeData.swift
 //  TestCaliNode
 //
-//  FIXED VERSION - Replace your existing PullTreeData.swift
+//  NEW UNLOCK LOGIC - Prerequisites to unlock next skill
 //
 
 import Foundation
@@ -18,12 +18,12 @@ let enhancedPullTreeV1 = EnhancedSkillTreeModel(
         SkillNode(
             id: "deadHang",
             label: "🪢",
-            fullLabel: "Dead Hang (10s)",
+            fullLabel: "Dead Hang (30s)",
             tree: "pull",
             requires: [],
             variationLevel: 0,
             version: 1,
-            confirmPrompt: "Can you Dead Hang for 10 seconds?",
+            confirmPrompt: "Can you dead hang for 5 seconds?", // ✅ Easy entry requirement
             unlocked: false,
             masteryLevel: 0,
             logHistory: []
@@ -31,12 +31,38 @@ let enhancedPullTreeV1 = EnhancedSkillTreeModel(
         SkillNode(
             id: "scapularPulls",
             label: "⬇️",
-            fullLabel: "Scapular Pulls (2x6)",
+            fullLabel: "Scapular Pulls (2x8)",
             tree: "pull",
             requires: ["deadHang"],
             variationLevel: 0,
             version: 1,
-            confirmPrompt: "Can you do 2 sets of 6 Scapular Pulls?",
+            confirmPrompt: "Can you dead hang for 30 seconds?", // ✅ Prerequisite: strong dead hang
+            unlocked: false,
+            masteryLevel: nil,
+            logHistory: []
+        ),
+        SkillNode(
+            id: "negativePullUp",
+            label: "⬇️💪",
+            fullLabel: "Negative Pull-Up (3x5s)",
+            tree: "pull",
+            requires: ["scapularPulls"],
+            variationLevel: 0,
+            version: 1,
+            confirmPrompt: "Can you do 2 sets of 6 scapular pulls?", // ✅ Prerequisite: solid scapular strength
+            unlocked: false,
+            masteryLevel: nil,
+            logHistory: []
+        ),
+        SkillNode(
+            id: "bandAssistedPullUp",
+            label: "🟡🆙",
+            fullLabel: "Band Assisted Pull-Up (2x6)",
+            tree: "pull",
+            requires: ["negativePullUp"],
+            variationLevel: 0,
+            version: 1,
+            confirmPrompt: "Can you do 3 negative pull-ups with 5-second descents?", // ✅ Prerequisite: controlled negatives
             unlocked: false,
             masteryLevel: nil,
             logHistory: []
@@ -44,12 +70,12 @@ let enhancedPullTreeV1 = EnhancedSkillTreeModel(
         SkillNode(
             id: "pullUp",
             label: "🆙",
-            fullLabel: "Pull-Ups (2x5)",
+            fullLabel: "Pull-Up (2x5)",
             tree: "pull",
-            requires: ["scapularPulls"],
+            requires: ["bandAssistedPullUp"],
             variationLevel: 0,
             version: 1,
-            confirmPrompt: "Can you do 2 sets of 5 Pull-Ups?",
+            confirmPrompt: "Can you do 2 sets of 5 band assisted pull-ups?", // ✅ Prerequisite: assisted strength
             unlocked: false,
             masteryLevel: nil,
             logHistory: []
@@ -58,8 +84,10 @@ let enhancedPullTreeV1 = EnhancedSkillTreeModel(
     
     foundationalPositions: [
         "deadHang": CGPoint(x: 200, y: 1000),
-        "scapularPulls": CGPoint(x: 200, y: 800),
-        "pullUp": CGPoint(x: 200, y: 600)
+        "scapularPulls": CGPoint(x: 200, y: 850),
+        "negativePullUp": CGPoint(x: 200, y: 700),
+        "bandAssistedPullUp": CGPoint(x: 200, y: 550),
+        "pullUp": CGPoint(x: 200, y: 400)
     ],
     
     // SPECIALIZED BRANCHES
@@ -79,7 +107,7 @@ let enhancedPullTreeV1 = EnhancedSkillTreeModel(
                     requires: ["pullUp"],
                     variationLevel: 1,
                     version: 1,
-                    confirmPrompt: "Can you do 2 sets of 3 Chest-to-Bar Pull-ups?",
+                    confirmPrompt: "Can you do 2 sets of 8 pull-ups?", // ✅ Prerequisite: solid pull-up volume
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -92,15 +120,15 @@ let enhancedPullTreeV1 = EnhancedSkillTreeModel(
                     requires: ["chestTouchPullup"],
                     variationLevel: 2,
                     version: 1,
-                    confirmPrompt: "Can you do a Muscle-Up?",
+                    confirmPrompt: "Can you do 2 sets of 3 chest-to-bar pull-ups?", // ✅ Prerequisite: explosive pulling power
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
                 )
             ],
             positions: [
-                "chestTouchPullup": CGPoint(x: 60, y: 450),
-                "muscleUp": CGPoint(x: 60, y: 250)
+                "chestTouchPullup": CGPoint(x: 60, y: 300),
+                "muscleUp": CGPoint(x: 60, y: 150)
             ]
         ),
         
@@ -114,12 +142,12 @@ let enhancedPullTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "flexedHang",
                     label: "💎",
-                    fullLabel: "Flexed Arm Hang (10s)",
+                    fullLabel: "Flexed Arm Hang (15s)",
                     tree: "pull",
                     requires: ["pullUp"],
                     variationLevel: 1,
                     version: 1,
-                    confirmPrompt: "Can you hold a Flexed Arm Hang for 10 seconds?",
+                    confirmPrompt: "Can you do 2 sets of 8 pull-ups?", // ✅ Prerequisite: pulling endurance
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -127,12 +155,12 @@ let enhancedPullTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "frontLeverTuck",
                     label: "🦅",
-                    fullLabel: "Front Lever Tuck (5s)",
+                    fullLabel: "Front Lever Tuck (8s)",
                     tree: "pull",
                     requires: ["flexedHang"],
                     variationLevel: 2,
                     version: 1,
-                    confirmPrompt: "Can you hold a Front Lever Tuck for 5 seconds?",
+                    confirmPrompt: "Can you hold a flexed arm hang for 15 seconds?", // ✅ Prerequisite: isometric hold strength
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -140,21 +168,21 @@ let enhancedPullTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "frontLever",
                     label: "🦅👑",
-                    fullLabel: "Front Lever (3s)",
+                    fullLabel: "Front Lever (5s)",
                     tree: "pull",
                     requires: ["frontLeverTuck"],
                     variationLevel: 3,
                     version: 1,
-                    confirmPrompt: "Can you hold a Front Lever for 3 seconds?",
+                    confirmPrompt: "Can you hold a front lever tuck for 8 seconds?", // ✅ Prerequisite: tuck progression
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
                 )
             ],
             positions: [
-                "flexedHang": CGPoint(x: 200, y: 450),
-                "frontLeverTuck": CGPoint(x: 200, y: 300),
-                "frontLever": CGPoint(x: 200, y: 150)
+                "flexedHang": CGPoint(x: 200, y: 300),
+                "frontLeverTuck": CGPoint(x: 200, y: 200),
+                "frontLever": CGPoint(x: 200, y: 100)
             ]
         ),
         
@@ -168,12 +196,12 @@ let enhancedPullTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "archerPullup",
                     label: "🏹",
-                    fullLabel: "Archer Pull-Ups (2x3)",
+                    fullLabel: "Archer Pull-Up (2x3)",
                     tree: "pull",
                     requires: ["pullUp"],
                     variationLevel: 1,
                     version: 1,
-                    confirmPrompt: "Can you do 2 sets of 3 Archer Pull-Ups?",
+                    confirmPrompt: "Can you do 2 sets of 10 pull-ups?", // ✅ Prerequisite: high volume pulling
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -186,15 +214,15 @@ let enhancedPullTreeV1 = EnhancedSkillTreeModel(
                     requires: ["archerPullup"],
                     variationLevel: 2,
                     version: 1,
-                    confirmPrompt: "Can you do a One-Arm Pull-up?",
+                    confirmPrompt: "Can you do 2 sets of 5 archer pull-ups per side?", // ✅ Prerequisite: unilateral progression
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
                 )
             ],
             positions: [
-                "archerPullup": CGPoint(x: 340, y: 450),
-                "oneArmPullup": CGPoint(x: 340, y: 250)
+                "archerPullup": CGPoint(x: 340, y: 300),
+                "oneArmPullup": CGPoint(x: 340, y: 150)
             ]
         )
     ],
@@ -204,12 +232,12 @@ let enhancedPullTreeV1 = EnhancedSkillTreeModel(
         SkillNode(
             id: "oneArmFrontLever",
             label: "🦅☝️",
-            fullLabel: "One-Arm Front Lever (1s)",
+            fullLabel: "One-Arm Front Lever (2s)",
             tree: "pull",
             requires: ["frontLever", "oneArmPullup"],
             variationLevel: 6,
             version: 1,
-            confirmPrompt: "Can you hold a One-Arm Front Lever for 1 second?",
+            confirmPrompt: "Can you hold a front lever for 10 seconds AND do 3 one-arm pull-ups per side?", // ✅ Prerequisites: both isometric and unilateral mastery
             unlocked: false,
             masteryLevel: nil,
             logHistory: []

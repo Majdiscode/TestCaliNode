@@ -2,14 +2,14 @@
 //  EnhancedSettingsView.swift
 //  TestCaliNode
 //
-//  Created by Majd Iskandarani on 7/7/25.
+//  Cleaned - Quest Manager References Removed
 //
 
 import SwiftUI
 
 struct EnhancedSettingsView: View {
     @ObservedObject var skillManager: GlobalSkillManager
-    @ObservedObject var questManager: QuestManager
+    // REMOVED: questManager parameter
     @AppStorage("isDarkMode") private var isDarkMode = true
     @State private var showingFeatureFlagPanel = false
     @State private var showingResetAlert = false
@@ -47,11 +47,7 @@ struct EnhancedSettingsView: View {
                         description: "Unlock and display achievement badges"
                     )
                     
-                    FeatureToggleRow(
-                        flag: .questNotifications,
-                        title: "Quest Notifications",
-                        description: "Get notified about quest progress"
-                    )
+                    // REMOVED: Quest notifications toggle
                 }
                 
                 // Debug Section (only in debug builds)
@@ -104,7 +100,7 @@ struct EnhancedSettingsView: View {
     
     private func resetAllData() {
         skillManager.resetAllSkills()
-        questManager.resetAllQuests()
+        // REMOVED: Quest manager reset
         FeatureFlagService.shared.resetToDefaults()
         print("🔄 All data reset")
     }

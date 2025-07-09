@@ -2,33 +2,17 @@
 //  DangerZoneSection.swift
 //  TestCaliNode
 //
-//  Created by Majd Iskandarani on 6/27/25.
-//
-
-//
-//  DangerZoneSection.swift
-//  TestCaliNode
-//
-//  Created by Majd Iskandarani on 6/27/25.
-//
-
-//
-//  ProgressComponents/DangerZoneSection.swift
-//  TestCaliNode
-//
-//  CREATE this as a new file in: View/Progress/ProgressComponents/
+//  Fixed Version - Quest Manager References Removed
 //
 
 import SwiftUI
 
 struct DangerZoneSection: View {
     @ObservedObject var skillManager: GlobalSkillManager
-    @ObservedObject var questManager: QuestManager
+    // REMOVED: questManager parameter
     @Binding var showResetConfirmation: Bool
     
     @State private var showSkillResetConfirmation = false
-    @State private var showQuestResetConfirmation = false
-    @State private var showProgressResetConfirmation = false
     @State private var expandedSection: DangerAction? = nil
     
     var body: some View {
@@ -36,22 +20,20 @@ struct DangerZoneSection: View {
             // Section Header
             sectionHeader
             
-            // Danger Actions
+            // Danger Actions (Only skill reset now)
             VStack(spacing: 12) {
-                ForEach(DangerAction.allCases, id: \.rawValue) { action in
-                    DangerActionCard(
-                        action: action,
-                        isExpanded: expandedSection == action,
-                        onTap: {
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                expandedSection = expandedSection == action ? nil : action
-                            }
-                        },
-                        onConfirm: {
-                            handleDangerAction(action)
+                DangerActionCard(
+                    action: .resetSkills,
+                    isExpanded: expandedSection == .resetSkills,
+                    onTap: {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            expandedSection = expandedSection == .resetSkills ? nil : .resetSkills
                         }
-                    )
-                }
+                    },
+                    onConfirm: {
+                        handleDangerAction(.resetSkills)
+                    }
+                )
             }
         }
         .padding(24)
@@ -68,22 +50,6 @@ struct DangerZoneSection: View {
             }
         } message: {
             Text("This will permanently delete all your skill progress. This action cannot be undone.")
-        }
-        .alert("Reset Quest Data?", isPresented: $showQuestResetConfirmation) {
-            Button("Cancel", role: .cancel) { }
-            Button("Reset All", role: .destructive) {
-                questManager.resetAllQuests()
-            }
-        } message: {
-            Text("This will permanently delete all quest progress, XP, and coins.")
-        }
-        .alert("Reset Progress Only?", isPresented: $showProgressResetConfirmation) {
-            Button("Cancel", role: .cancel) { }
-            Button("Reset Progress", role: .destructive) {
-                questManager.resetQuestProgress()
-            }
-        } message: {
-            Text("This will reset quest progress but keep completed quests for reference.")
         }
     }
     
@@ -112,10 +78,6 @@ struct DangerZoneSection: View {
         switch action {
         case .resetSkills:
             showSkillResetConfirmation = true
-        case .resetQuests:
-            showQuestResetConfirmation = true
-        case .resetProgress:
-            showProgressResetConfirmation = true
         }
         
         // Collapse the expanded section
@@ -125,49 +87,37 @@ struct DangerZoneSection: View {
     }
 }
 
-// MARK: - Danger Action Enum
+// MARK: - Danger Action Enum (Simplified)
 enum DangerAction: String, CaseIterable {
     case resetSkills = "resetSkills"
-    case resetQuests = "resetQuests"
-    case resetProgress = "resetProgress"
     
     var title: String {
         switch self {
         case .resetSkills: return "Reset All Skills"
-        case .resetQuests: return "Reset Quest Data"
-        case .resetProgress: return "Reset Progress Only"
         }
     }
     
     var description: String {
         switch self {
         case .resetSkills: return "This will permanently delete all your unlocked skills and progress. This action cannot be undone."
-        case .resetQuests: return "Reset all quest progress, XP, and coins for testing purposes."
-        case .resetProgress: return "Reset quest progress but keep completed quests for reference."
         }
     }
     
     var buttonText: String {
         switch self {
         case .resetSkills: return "Reset All Skills"
-        case .resetQuests: return "Reset Quests"
-        case .resetProgress: return "Reset Progress Only"
         }
     }
     
     var color: Color {
         switch self {
         case .resetSkills: return .red
-        case .resetQuests: return .orange
-        case .resetProgress: return .yellow
         }
     }
     
     var icon: String {
         switch self {
         case .resetSkills: return "trash.fill"
-        case .resetQuests: return "flag.slash.fill"
-        case .resetProgress: return "arrow.counterclockwise"
         }
     }
 }
@@ -256,54 +206,5 @@ struct DangerActionCard: View {
                 .stroke(action.color.opacity(isExpanded ? 0.5 : 0.2), lineWidth: 1)
         )
         .animation(.easeInOut(duration: 0.3), value: isExpanded)
-    }
-}
-
-// MARK: - Simple Danger Zone (Alternative Compact Version)
-struct SimpleDangerZoneSection: View {
-    @ObservedObject var skillManager: GlobalSkillManager
-    @ObservedObject var questManager: QuestManager
-    @State private var showResetConfirmation = false
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Reset Options")
-                .font(.headline)
-                .fontWeight(.semibold)
-                .foregroundColor(.red)
-            
-            HStack(spacing: 12) {
-                Button("Reset Skills") {
-                    showResetConfirmation = true
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Color.red)
-                .foregroundColor(.white)
-                .clipShape(Capsule())
-                
-                Button("Reset Quests") {
-                    questManager.resetAllQuests()
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Color.orange)
-                .foregroundColor(.white)
-                .clipShape(Capsule())
-                
-                Spacer()
-            }
-        }
-        .padding(16)
-        .background(Color.red.opacity(0.05))
-        .cornerRadius(12)
-        .alert("Reset All Skills?", isPresented: $showResetConfirmation) {
-            Button("Cancel", role: .cancel) { }
-            Button("Reset All", role: .destructive) {
-                skillManager.resetAllSkills()
-            }
-        } message: {
-            Text("This will permanently delete all your progress. This action cannot be undone.")
-        }
     }
 }

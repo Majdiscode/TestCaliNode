@@ -2,7 +2,7 @@
 //  GlobalSkillManager.swift
 //  TestCaliNode
 //
-//  Enhanced with Quest System Integration - Final Clean Version
+//  Cleaned Version - Quest Integration Removed
 //
 
 import Foundation
@@ -68,7 +68,7 @@ class GlobalSkillManager: ObservableObject {
         print("🔍 Skills per tree: \(treeCounts.joined(separator: ", "))")
     }
     
-    // MARK: - Skill Management
+    // MARK: - Skill Management (Quest Integration Removed)
     
     func canUnlock(_ skillID: String) -> Bool {
         guard let skill = allSkills[skillID] else { return false }
@@ -78,18 +78,13 @@ class GlobalSkillManager: ObservableObject {
     }
     
     func unlock(_ skillID: String) {
-        let wasAlreadyUnlocked = isUnlocked(skillID)
-        
         guard canUnlock(skillID) else { return }
         unlockedSkills.insert(skillID)
         
         saveProgress(skillID)
         
-        // Notify quest system if this is a new unlock
-        if !wasAlreadyUnlocked {
-            QuestManager.shared.updateQuestProgress(skillUnlocked: skillID)
-            handleQuestTriggers(for: skillID)
-        }
+        // REMOVED: Quest system integration
+        // No longer notify quest manager or trigger quest events
         
         print("🔓 Unlocked skill: \(skillID)")
     }
@@ -107,45 +102,6 @@ class GlobalSkillManager: ObservableObject {
         let unmetIDs = getUnmetRequirements(for: skillID)
         return unmetIDs.compactMap { id in
             allSkills[id]?.fullLabel.components(separatedBy: " (").first
-        }
-    }
-    
-    // MARK: - Quest Integration (renamed to avoid conflicts)
-    
-    private func handleQuestTriggers(for skillID: String) {
-        let questManager = QuestManager.shared
-        
-        // Check if this was a foundational skill
-        let foundationalSkills = allEnhancedSkillTrees.flatMap { $0.foundationalSkills }
-        if foundationalSkills.contains(where: { $0.id == skillID }) {
-            questManager.triggerFoundationalSkillUnlock()
-        }
-        
-        // Check if this completed a branch
-        for tree in allEnhancedSkillTrees {
-            for branch in tree.branches {
-                let branchSkills = branch.skills.map(\.id)
-                if branchSkills.contains(skillID) {
-                    let allBranchSkillsUnlocked = branchSkills.allSatisfy { unlockedSkills.contains($0) }
-                    if allBranchSkillsUnlocked {
-                        questManager.triggerBranchCompletion(branchID: branch.id, treeID: tree.id)
-                    }
-                }
-            }
-        }
-        
-        // Check if this was a master skill
-        let masterSkills = allEnhancedSkillTrees.flatMap { $0.masterSkills }
-        if masterSkills.contains(where: { $0.id == skillID }) {
-            questManager.triggerMasterSkillUnlock(skillID: skillID)
-        }
-        
-        // Check if this completed a tree
-        if let skill = allSkills[skillID] {
-            let treeProgress = getTreeProgress(skill.tree)
-            if treeProgress.unlocked == treeProgress.total && treeProgress.total > 0 {
-                questManager.triggerTreeCompletion(treeID: skill.tree)
-            }
         }
     }
     

@@ -1,15 +1,8 @@
 //
-//  EnhancedCoreTreeData.swift
+//  UpdatedCoreTreeData.swift
 //  TestCaliNode
 //
-//  Created by Majd Iskandarani on 6/14/25.
-//
-
-//
-//  EnhancedCoreTreeData.swift
-//  TestCaliNode
-//
-//  Created by Majd Iskandarani on 6/14/25.
+//  NEW UNLOCK LOGIC - Fixed compilation errors
 //
 
 import Foundation
@@ -20,7 +13,7 @@ let enhancedCoreTreeV1 = EnhancedSkillTreeModel(
     name: "Core Tree",
     version: 1,
     
-    // FOUNDATIONAL SKILLS - Basic core stability
+    // FOUNDATIONAL SKILLS - Basic core stability (TWO SEPARATE STARTING POINTS)
     foundationalSkills: [
         SkillNode(
             id: "plank",
@@ -30,7 +23,7 @@ let enhancedCoreTreeV1 = EnhancedSkillTreeModel(
             requires: [],
             variationLevel: 0,
             version: 1,
-            confirmPrompt: "Can you hold a Plank for 60 seconds?",
+            confirmPrompt: "Can you hold a plank for 15 seconds?", // ✅ Easy entry requirement
             unlocked: false,
             masteryLevel: nil,
             logHistory: []
@@ -38,12 +31,12 @@ let enhancedCoreTreeV1 = EnhancedSkillTreeModel(
         SkillNode(
             id: "hollowHold",
             label: "🥚",
-            fullLabel: "Hollow Hold (30s)",
+            fullLabel: "Hollow Hold (45s)",
             tree: "core",
             requires: [],
             variationLevel: 0,
             version: 1,
-            confirmPrompt: "Can you do a Hollow Hold for 30 seconds?",
+            confirmPrompt: "Can you do a hollow hold for 10 seconds?", // ✅ Easy entry requirement (separate from plank)
             unlocked: false,
             masteryLevel: nil,
             logHistory: []
@@ -51,12 +44,12 @@ let enhancedCoreTreeV1 = EnhancedSkillTreeModel(
         SkillNode(
             id: "deadBug",
             label: "🪲",
-            fullLabel: "Dead Bug (2x10)",
+            fullLabel: "Dead Bug (2x8)",
             tree: "core",
             requires: ["plank", "hollowHold"],
             variationLevel: 0,
             version: 1,
-            confirmPrompt: "Can you do 2 sets of 10 Dead Bugs per side?",
+            confirmPrompt: "Can you hold a plank for 60 seconds AND a hollow hold for 45 seconds?", // ✅ Prerequisites: both foundation holds mastered
             unlocked: false,
             masteryLevel: nil,
             logHistory: []
@@ -81,12 +74,12 @@ let enhancedCoreTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "sidePlank",
                     label: "📐",
-                    fullLabel: "Side Plank (45s each)",
+                    fullLabel: "Side Plank (60s each)",
                     tree: "core",
                     requires: ["deadBug"],
                     variationLevel: 1,
                     version: 1,
-                    confirmPrompt: "Can you hold Side Planks for 45 seconds each side?",
+                    confirmPrompt: "Can you do 2 sets of 8 dead bugs per side?", // ✅ Prerequisite: core coordination
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -94,12 +87,12 @@ let enhancedCoreTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "lSit",
                     label: "🪑",
-                    fullLabel: "L-Sit (10s)",
+                    fullLabel: "L-Sit (15s)",
                     tree: "core",
                     requires: ["sidePlank"],
                     variationLevel: 2,
                     version: 1,
-                    confirmPrompt: "Can you hold an L-Sit for 10 seconds?",
+                    confirmPrompt: "Can you hold side planks for 60 seconds each side?", // ✅ Prerequisite: lateral core strength
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -107,12 +100,12 @@ let enhancedCoreTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "vSit",
                     label: "✌️",
-                    fullLabel: "V-Sit (5s)",
+                    fullLabel: "V-Sit (8s)",
                     tree: "core",
                     requires: ["lSit"],
                     variationLevel: 3,
                     version: 1,
-                    confirmPrompt: "Can you hold a V-Sit for 5 seconds?",
+                    confirmPrompt: "Can you hold an L-Sit for 15 seconds?", // ✅ Prerequisite: L-Sit progression
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -135,12 +128,12 @@ let enhancedCoreTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "legRaises",
                     label: "🦵⬆️",
-                    fullLabel: "Leg Raises (2x10)",
+                    fullLabel: "Leg Raises (2x8)",
                     tree: "core",
                     requires: ["deadBug"],
                     variationLevel: 1,
                     version: 1,
-                    confirmPrompt: "Can you do 2 sets of 10 Leg Raises?",
+                    confirmPrompt: "Can you do 2 sets of 8 dead bugs per side?", // ✅ Prerequisite: core coordination
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -148,12 +141,12 @@ let enhancedCoreTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "toesToBar",
                     label: "🦶📏",
-                    fullLabel: "Toes-to-Bar (2x8)",
+                    fullLabel: "Toes-to-Bar (2x6)",
                     tree: "core",
                     requires: ["legRaises"],
                     variationLevel: 2,
                     version: 1,
-                    confirmPrompt: "Can you do 2 sets of 8 Toes-to-Bar?",
+                    confirmPrompt: "Can you do 2 sets of 8 leg raises?", // ✅ Prerequisite: leg raise strength
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -161,12 +154,12 @@ let enhancedCoreTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "dragonFlag",
                     label: "🐉",
-                    fullLabel: "Dragon Flag (1x5)",
+                    fullLabel: "Dragon Flag (1x3)",
                     tree: "core",
                     requires: ["toesToBar"],
                     variationLevel: 3,
                     version: 1,
-                    confirmPrompt: "Can you do 5 Dragon Flags?",
+                    confirmPrompt: "Can you do 2 sets of 6 toes-to-bar?", // ✅ Prerequisite: advanced hanging core strength
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -189,12 +182,12 @@ let enhancedCoreTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "russianTwist",
                     label: "🌪️",
-                    fullLabel: "Russian Twist (2x20)",
+                    fullLabel: "Russian Twist (2x15)",
                     tree: "core",
                     requires: ["deadBug"],
                     variationLevel: 1,
                     version: 1,
-                    confirmPrompt: "Can you do 2 sets of 20 Russian Twists?",
+                    confirmPrompt: "Can you do 2 sets of 8 dead bugs per side?", // ✅ Prerequisite: core coordination
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -202,12 +195,12 @@ let enhancedCoreTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "windshieldWiper",
                     label: "🚗",
-                    fullLabel: "Windshield Wiper (2x10)",
+                    fullLabel: "Windshield Wiper (2x8)",
                     tree: "core",
                     requires: ["russianTwist"],
                     variationLevel: 2,
                     version: 1,
-                    confirmPrompt: "Can you do 2 sets of 10 Windshield Wipers?",
+                    confirmPrompt: "Can you do 2 sets of 15 Russian twists?", // ✅ Prerequisite: rotational endurance
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -215,12 +208,12 @@ let enhancedCoreTreeV1 = EnhancedSkillTreeModel(
                 SkillNode(
                     id: "humanFlag",
                     label: "🏳️",
-                    fullLabel: "Human Flag (3s)",
+                    fullLabel: "Human Flag (5s)",
                     tree: "core",
                     requires: ["windshieldWiper"],
                     variationLevel: 3,
                     version: 1,
-                    confirmPrompt: "Can you hold a Human Flag for 3 seconds?",
+                    confirmPrompt: "Can you do 2 sets of 8 windshield wipers?", // ✅ Prerequisite: hanging rotational strength
                     unlocked: false,
                     masteryLevel: nil,
                     logHistory: []
@@ -239,12 +232,12 @@ let enhancedCoreTreeV1 = EnhancedSkillTreeModel(
         SkillNode(
             id: "oneArmHumanFlag",
             label: "☝️🏳️",
-            fullLabel: "One-Arm Human Flag (1s)",
+            fullLabel: "One-Arm Human Flag (2s)",
             tree: "core",
             requires: ["vSit", "dragonFlag", "humanFlag"], // Cross-branch requirement
             variationLevel: 6,
             version: 1,
-            confirmPrompt: "Can you hold a One-Arm Human Flag for 1 second?",
+            confirmPrompt: "Can you hold a V-Sit for 8 seconds AND do 3 dragon flags AND hold a human flag for 5 seconds?", // ✅ Prerequisites: all three branch paths mastered
             unlocked: false,
             masteryLevel: nil,
             logHistory: []
